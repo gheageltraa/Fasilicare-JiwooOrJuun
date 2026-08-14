@@ -1,10 +1,10 @@
 <div align="center">
   
-  # WorkInclusiv 
-  ### Smart & Inclusive Gig-Economy Platform for Equitable Economic Growth
+  # FasiliCare 🚆
+  ### Crowdsourced Public Transport Facility Maintenance & Ticketing Platform
   
-  [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://workinclusiv.vercel.app)
-  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/username/workinclusiv)
+  [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://fasilicare.vercel.app)
+  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/killudha/fasilicare)
   [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
   
   **Submission for ITECHNO CUP 2026 - Web Development**
@@ -35,10 +35,8 @@
 
 | Nama | Peran | GitHub |
 |------|-------|--------|
-| **[Nama Lengkap 1]** | Project Lead & Full Stack Developer | [@username1](https://github.com/username1) |
-| **[Nama Lengkap 2]** | Frontend Developer | [@username2](https://github.com/username2) |
-| **[Nama Lengkap 3]** | Backend Developer | [@username3](https://github.com/username3) |
-| **[Nama Lengkap 4]** | UI/UX Designer | [@username4](https://github.com/username4) |
+| **DHANNY ABDUL QODIR AL JAELANY** | - | [@killudha](https://github.com/killudha) |
+| **GHEA GELTRA AMBARWINOTO** | - | [@gheageltraa](https://github.com/gheageltraa) |
 
 ---
 
@@ -46,20 +44,20 @@
 
 ### Latar Belakang
 
-Berdasarkan data dari Organisasi Perburuhan Internasional (ILO), tingkat partisipasi kerja bagi kelompok penyandang disabilitas dan pekerja sektor informal masih sangat jauh di bawah rata-rata nasional. Sebagian besar platform kerja lepas (gig economy) saat ini memiliki kendala utama:
-1. **Aksesibilitas Antarmuka yang Buruk**: Tidak dirancang khusus untuk memenuhi standar WCAG (Web Content Accessibility Guidelines), sehingga menyulitkan pengguna dengan kebutuhan khusus.
-2. **Penilaian Keterampilan yang Tidak Adil**: Sertifikasi formal seringkali menjadi batasan utama bagi pekerja mikro untuk mendapatkan pekerjaan.
-3. **Resiko Penipuan Pembayaran**: Ketidakpastian insentif bagi pekerja informal dan penyedia kerja berskala UMKM.
+Jutaan komuter bergantung pada transportasi publik (KRL, MRT, TransJakarta) setiap harinya. Tingginya mobilitas ini menyebabkan tingkat keausan fasilitas sangat cepat. Sayangnya, sistem pelaporan saat ini memiliki kendala utama:
+1. **Pelaporan Fragmented & Lambat**: Komuter sering melapor via media sosial yang rentan tenggelam, atau harus mencari petugas di stasiun yang sedang sibuk.
+2. **Efek "Black Hole"**: Penumpang yang melapor tidak pernah tahu apakah laporannya diproses atau diabaikan, menurunkan tingkat partisipasi dan kepercayaan publik.
+3. **Data Tidak Terstruktur**: Pihak operator kesulitan memetakan fasilitas atau armada mana yang paling rawan rusak karena data keluhan tidak terpusat.
 
 ### Solusi yang Ditawarkan
 
-**WorkInclusiv** hadir sebagai platform web pasar kerja lepas mikro yang menghubungkan UMKM lokal dengan calon pekerja secara inklusif dan transparan. Platform ini memadukan **Universal Accessibility Design**, **Smart Task Matchmaking Algorithm**, dan **Escrow Payment Security** untuk mendukung *SDG 8: Pekerjaan Layak dan Pertumbuhan Ekonomi*.
+**FasiliCare** hadir sebagai platform *ticketing* pemeliharaan berbasis *crowdsourcing* yang mendigitalkan ekosistem pelaporan kerusakan fasilitas transportasi publik. Platform ini memadukan **Smart QR-Triggered Report**, **Community Upvote Validation**, dan **Real-Time Task Delegation** untuk mendukung *SDG 9: Industri, Inovasi, dan Infrastruktur* serta *SDG 11: Kota dan Komunitas Berkelanjutan*.
 
 ### Tujuan Proyek
 
-- 🎯 **Tujuan Utama**: Menciptakan ekosistem gig-economy yang adil, berkelanjutan, dan dapat diakses secara universal oleh seluruh lapisan masyarakat.
-- 📊 **Target Pengguna**: Penyandang disabilitas, pekerja informal/freelancer pemula, serta Pelaku UMKM lokal yang membutuhkan jasa mikro.
-- 💡 **Value Proposition**: Akses antarmuka inklusif bawaan (*Screen Reader, High Contrast, Voice Control*), transparansi sistem dompet digital/escrow, serta pencocokan kerja otomatis berbasis kemampuan (*skill-matching algorithm*).
+- 🎯 **Tujuan Utama**: Mempercepat *Response Time* perbaikan fasilitas transportasi publik (Stasiun, Halte, dan Gerbong) melalui pelaporan komunitas yang terpusat dan tervalidasi.
+- 📊 **Target Pengguna**: Penumpang komuter (sebagai pelapor komunitas), Kepala Stasiun/Halte (sebagai Admin Triage), dan Teknisi Lapangan (sebagai Eksekutor).
+- 💡 **Value Proposition**: Pelaporan dalam hitungan detik via Web/PWA tanpa instalasi berat, transparansi progres perbaikan *end-to-end*, dan pencegahan laporan palsu (*spam*) menggunakan logika verifikasi dari sesama penumpang.
 
 ---
 
@@ -69,17 +67,16 @@ Berdasarkan data dari Organisasi Perburuhan Internasional (ILO), tingkat partisi
 
 | Fitur | Deskripsi | Keunggulan |
 |----------|--------------|---------------|
-| **Universal Accessibility Engine** | Panel aksesibilitas interaktif bawaan web (High Contrast, Large Font, Text-to-Speech, Voice Commands, Keyboard Nav). | Memastikan platform ramah disabilitas (memenuhi WCAG 2.1 Level AA) tanpa bantuan *extension* pihak ketiga. |
-| **Smart Skill Matchmaking** | Algoritma terintegrasi untuk mencocokkan profil pekerja mikro dengan tugas yang relevan secara objektif. | Menghilangkan bias sertifikasi formal dan merekomendasikan pekerjaan yang pas sesuai kemampuan riil. |
-| **Escrow & Micro-Job Management** | Panel manajemen proyek interaktif yang mengamankan dana pemberi kerja sebelum tugas diselesaikan. | Mencegah penipuan pembayaran (*payment fraud*) dan memberikan jaminan finansial bagi pekerja informal. |
-| **Fair-Trade Pricing Calculator** | Alat bantu estimasi harga jasa adil bagi UMKM dan penawaran transparan bagi pekerja. | Mencegah eksploitasi harga kerja di bawah standar pasar minimum. |
+| **Smart QR-Triggered Report** | Komuter memindai QR code di gerbong/halte untuk melapor. Web otomatis mengenali ID lokasi tanpa *input* manual. | Mempercepat pelaporan, mencegah kesalahan ketik lokasi, dan mempercepat respons teknisi ke titik akurat. |
+| **Community Upvote Validation** | Sistem anti-spam organik. Laporan tampil di *feed* publik agar divalidasi (di-upvote) penumpang lain sebelum masuk ke teknisi. | Mencegah penumpukan tiket duplikat untuk satu fasilitas rusak yang sama dan menghindari *server overload*. |
+| **RBAC Triage Dashboard** | Panel khusus dengan hak akses (*Role-Based Access Control*) terpisah untuk Admin (menyortir laporan) dan Teknisi. | Memastikan alur kerja pendelegasian yang terstruktur (*Menunggu -> Dikerjakan -> Selesai*). |
+| **Live Proof of Repair** | Sistem mewajibkan teknisi mengambil "Live Photo" hasil perbaikan sebelum bisa menutup status tiket pelaporan. | Memberikan transparansi penuh. Penumpang pelapor akan mendapat notifikasi bahwa fasilitas sudah bisa digunakan. |
 
 ### Fitur Tambahan
 
-- **Interactive Micro-Learning Hub** - Modul pelatihan tingkat dasar untuk meningkatkan keterampilan digital pekerja.
-- **Verification & Badge System** - Sertifikat digital berbasis performa penyelesaian tugas.
-- **Real-Time Notification & Chat** - Media komunikasi langsung antara klien dan pekerja.
-- **Analytics Dashboard** - Graph visualisasi pendapatan pekerja dan pengeluaran UMKM.
+- **Heatmap Analytics Dashboard** - Visualisasi grafis bagi manajemen untuk melihat stasiun atau rute mana dengan tingkat kerusakan tertinggi.
+- **Progress Tracking Indicator** - *Timeline* pelacakan visual bagi komuter untuk memantau status tiket laporan mereka.
+- **Progressive Web App (PWA)** - Optimasi aplikasi web agar tetap responsif dan bisa diakses lancar meski sinyal internet komuter sedang tidak stabil di perjalanan.
 
 ---
 
@@ -87,19 +84,19 @@ Berdasarkan data dari Organisasi Perburuhan Internasional (ILO), tingkat partisi
 
 ### Live Demo
 
-🔗 **[Kunjungi Website WorkInclusiv](https://workinclusiv.vercel.app)**
+🔗 **[Kunjungi Website FasiliCare](https://fasilicare.vercel.app)**
 
 ### Screenshot Aplikasi
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=WorkInclusiv+Landing+Page" alt="Homepage" width="800"/>
-  <p><em>Homepage - Tampilan utama inklusif dengan pilihan mode aksesibilitas</em></p>
+  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=FasiliCare+Mobile+Scan+Page" alt="Mobile Scan Page" width="800"/>
+  <p><em>Halaman Pelaporan Mobile - Antarmuka PWA responsif untuk memindai QR dan mengambil Live Photo kerusakan</em></p>
   
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Gig+Matchmaking+Dashboard" alt="Dashboard" width="800"/>
-  <p><em>Dashboard Matchmaking - Panel pencocokan pekerjaan berbasis kecocokan skill</em></p>
+  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Community+Feed+%26+Upvote" alt="Community Feed" width="800"/>
+  <p><em>Community Feed - Halaman publik untuk melihat dan memberikan Upvote pada laporan penumpang lain</em></p>
   
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Accessibility+Settings" alt="Accessibility Feature" width="800"/>
-  <p><em>Universal Accessibility Controller - Pengaturan fitur ramah disabilitas</em></p>
+  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Admin+Triage+Dashboard" alt="Admin Dashboard" width="800"/>
+  <p><em>Admin Triage Dashboard - Panel manajemen Kepala Stasiun untuk menugaskan teknisi</em></p>
 </div>
 
 ---
@@ -109,3 +106,41 @@ Berdasarkan data dari Organisasi Perburuhan Internasional (ILO), tingkat partisi
 ### Tech Stack
 
 #### Frontend
+- **Framework**: Next.js (React.js)
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand / React Context
+- **Icons & UI Components**: Lucide React & Radix UI (shadcn/ui)
+
+#### Backend
+- **Framework**: Next.js API Routes (Serverless) / Node.js Express
+- **Authentication**: NextAuth.js (Google OAuth & JWT credentials)
+- **File Storage**: Supabase Storage / Cloudinary
+
+#### Database
+- **Relational Database**: PostgreSQL (Hosted on Neon / Supabase)
+- **ORM**: Prisma (Type-safe database client)
+
+#### Deployment & CI/CD
+- **Hosting**: Vercel (Frontend & Serverless API)
+- **Version Control & CI**: GitHub / GitHub Actions
+
+---
+
+## ⚙️ Arsitektur Sistem (Workflow)
+
+1. **Scan & Detect**: Penumpang memindai QR Code di Halte TransJakarta (Contoh ID: `TJ-DA-01`).
+2. **Report**: Antarmuka web terbuka. Penumpang login via Google, memotret fasilitas yang rusak, dan mengirim laporan.
+3. **Validate**: Laporan masuk ke *Community Feed*. Penumpang lain di lokasi yang sama mengklik tombol "Sama-sama Terdampak" (Upvote).
+4. **Dispatch**: Setelah mencapai batas minimal Upvote, Kepala Halte (Admin) menerima tiket dan meneruskannya ke akun Teknisi Lapangan.
+5. **Resolve**: Teknisi memperbaiki fasilitas, mengambil *Live Photo* bukti perbaikan via HP, dan menutup tiket (Status: Selesai).
+
+---
+
+## 🚀 Instalasi & Setup
+
+Panduan menjalankan proyek ini secara lokal untuk *development*:
+
+1. **Clone repository**
+   ```bash
+   git clone [https://github.com/killudha/fasilicare.git](https://github.com/killudha/fasilicare.git)
+   cd fasilicare
