@@ -1,0 +1,2 @@
+ALTER TABLE `tickets` ADD `assignedTechId` int;--> statement-breakpoint
+ALTER TABLE `tickets` ADD CONSTRAINT `tickets_assigned_tech_fk` FOREIGN KEY (`assignedTechId`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;

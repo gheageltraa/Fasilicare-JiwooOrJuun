@@ -1,146 +1,96 @@
-<div align="center">
-  
-  # FasiliCare 🚆
-  ### Crowdsourced Public Transport Facility Maintenance & Ticketing Platform
-  
-  [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://fasilicare.vercel.app)
-  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/killudha/fasilicare)
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-  
-  **Submission for ITECHNO CUP 2026 - Web Development**
-  
-  **By Tim Developer**
-  
-</div>
+FasiliCare 🚇✨
 
----
+FasiliCare is a crowdsourced public transport facility maintenance ticketing platform. Built as a Minimum Viable Product (MVP) for the ITECHNO CUP 2026 competition.
 
-## 📋 Daftar Isi
+FasiliCare bridges the gap between daily commuters, facility administrators, and technicians. It empowers citizens to report facility issues (like broken escalators, dirty train cars, or urgent incidents) while preventing duplicate reports and incentivizing community participation through gamification.
 
-- [Tentang Proyek](#-tentang-proyek)
-- [Fitur Unggulan](#-fitur-unggulan)
-- [Demo & Screenshot](#-demo--screenshot)
-- [Teknologi](#-teknologi)
-- [Arsitektur Sistem](#-arsitektur-sistem)
-- [Instalasi & Setup](#-instalasi--setup)
-- [Penggunaan](#-penggunaan)
-- [API Documentation](#-api-documentation)
-- [Testing](#-testing)
-- [Tim Developer](#-tim-pengembang)
-- [Lisensi](#-lisensi)
+🌟 Key Features
 
----
+Role-Based Dashboards: Distinct interfaces for USER (Commuters), ADMIN (Triage & Assignment), and TECH (Technicians).
 
-## 👥 Tim Developer
+Smart Reporting System: Prevents duplicate reports by dynamically showing recent issues at the selected location. Includes Urgency levels (Low, Medium, High).
 
-| Nama | Peran | GitHub |
-|------|-------|--------|
-| **DHANNY ABDUL QODIR AL JAELANY** | - | [@killudha](https://github.com/killudha) |
-| **GHEA GELTRA AMBARWINOTO** | - | [@gheageltraa](https://github.com/gheageltraa) |
+Community Feed & Forum: Users can upvote issues to increase visibility and comment on tickets to provide real-time updates.
 
----
+Echoes (Archive Hub): A dedicated, filterable space to view resolved tickets and track maintenance history.
 
-## 🎯 Tentang Proyek
+Gamification: Users earn "Reputation Points" for reporting (+10) and when their reported issue gets resolved (+50).
 
-### Latar Belakang
+Direct Cloudinary Uploads: Fast, client-side unsigned image uploads for evidence and live proof photos.
 
-Jutaan komuter bergantung pada transportasi publik (KRL, MRT, TransJakarta) setiap harinya. Tingginya mobilitas ini menyebabkan tingkat keausan fasilitas sangat cepat. Sayangnya, sistem pelaporan saat ini memiliki kendala utama:
-1. **Pelaporan Fragmented & Lambat**: Komuter sering melapor via media sosial yang rentan tenggelam, atau harus mencari petugas di stasiun yang sedang sibuk.
-2. **Efek "Black Hole"**: Penumpang yang melapor tidak pernah tahu apakah laporannya diproses atau diabaikan, menurunkan tingkat partisipasi dan kepercayaan publik.
-3. **Data Tidak Terstruktur**: Pihak operator kesulitan memetakan fasilitas atau armada mana yang paling rawan rusak karena data keluhan tidak terpusat.
+"God Mode" Role Switcher: An exclusive, built-in testing feature allowing Project Leads to swap between roles on the fly without needing multiple accounts.
 
-### Solusi yang Ditawarkan
+💻 Tech Stack
 
-**FasiliCare** hadir sebagai platform *ticketing* pemeliharaan berbasis *crowdsourcing* yang mendigitalkan ekosistem pelaporan kerusakan fasilitas transportasi publik. Platform ini memadukan **Smart QR-Triggered Report**, **Community Upvote Validation**, dan **Real-Time Task Delegation** untuk mendukung *SDG 9: Industri, Inovasi, dan Infrastruktur* serta *SDG 11: Kota dan Komunitas Berkelanjutan*.
+Framework: Next.js 14 (App Router)
 
-### Tujuan Proyek
+Language: TypeScript
 
-- 🎯 **Tujuan Utama**: Mempercepat *Response Time* perbaikan fasilitas transportasi publik (Stasiun, Halte, dan Gerbong) melalui pelaporan komunitas yang terpusat dan tervalidasi.
-- 📊 **Target Pengguna**: Penumpang komuter (sebagai pelapor komunitas), Kepala Stasiun/Halte (sebagai Admin Triage), dan Teknisi Lapangan (sebagai Eksekutor).
-- 💡 **Value Proposition**: Pelaporan dalam hitungan detik via Web/PWA tanpa instalasi berat, transparansi progres perbaikan *end-to-end*, dan pencegahan laporan palsu (*spam*) menggunakan logika verifikasi dari sesama penumpang.
+Styling: Tailwind CSS & shadcn/ui
 
----
+Database: PostgreSQL (Hosted on Supabase)
 
-## ✨ Fitur Unggulan
+ORM: Prisma
 
-### Fitur Utama
+Authentication: NextAuth.js (Google Provider)
 
-| Fitur | Deskripsi | Keunggulan |
-|----------|--------------|---------------|
-| **Smart QR-Triggered Report** | Komuter memindai QR code di gerbong/halte untuk melapor. Web otomatis mengenali ID lokasi tanpa *input* manual. | Mempercepat pelaporan, mencegah kesalahan ketik lokasi, dan mempercepat respons teknisi ke titik akurat. |
-| **Community Upvote Validation** | Sistem anti-spam organik. Laporan tampil di *feed* publik agar divalidasi (di-upvote) penumpang lain sebelum masuk ke teknisi. | Mencegah penumpukan tiket duplikat untuk satu fasilitas rusak yang sama dan menghindari *server overload*. |
-| **RBAC Triage Dashboard** | Panel khusus dengan hak akses (*Role-Based Access Control*) terpisah untuk Admin (menyortir laporan) dan Teknisi. | Memastikan alur kerja pendelegasian yang terstruktur (*Menunggu -> Dikerjakan -> Selesai*). |
-| **Live Proof of Repair** | Sistem mewajibkan teknisi mengambil "Live Photo" hasil perbaikan sebelum bisa menutup status tiket pelaporan. | Memberikan transparansi penuh. Penumpang pelapor akan mendapat notifikasi bahwa fasilitas sudah bisa digunakan. |
+Image Storage: Cloudinary
 
-### Fitur Tambahan
+🚀 Getting Started
 
-- **Heatmap Analytics Dashboard** - Visualisasi grafis bagi manajemen untuk melihat stasiun atau rute mana dengan tingkat kerusakan tertinggi.
-- **Progress Tracking Indicator** - *Timeline* pelacakan visual bagi komuter untuk memantau status tiket laporan mereka.
-- **Progressive Web App (PWA)** - Optimasi aplikasi web agar tetap responsif dan bisa diakses lancar meski sinyal internet komuter sedang tidak stabil di perjalanan.
+Follow these steps to set up the project locally.
 
----
+1. Clone the repository
 
-## 📸 Demo & Screenshot
+git clone https://github.com/yourusername/fasilicare.git
+cd fasilicare
 
-### Live Demo
+2. Install Dependencies
+Bash
+npm install
+3. Environment Variables
+Create a .env file in the root directory and add the following variables. Do not use your real passwords in public repositories.
 
-🔗 **[Kunjungi Website FasiliCare](https://fasilicare.vercel.app)**
+Code snippet
+# Database (PostgreSQL via Supabase)
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
 
-### Screenshot Aplikasi
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your_super_secret_string"
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=FasiliCare+Mobile+Scan+Page" alt="Mobile Scan Page" width="800"/>
-  <p><em>Halaman Pelaporan Mobile - Antarmuka PWA responsif untuk memindai QR dan mengambil Live Photo kerusakan</em></p>
-  
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Community+Feed+%26+Upvote" alt="Community Feed" width="800"/>
-  <p><em>Community Feed - Halaman publik untuk melihat dan memberikan Upvote pada laporan penumpang lain</em></p>
-  
-  <img src="https://via.placeholder.com/800x450/1e293b/ffffff?text=Admin+Triage+Dashboard" alt="Admin Dashboard" width="800"/>
-  <p><em>Admin Triage Dashboard - Panel manajemen Kepala Stasiun untuk menugaskan teknisi</em></p>
-</div>
+# Google OAuth
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
 
----
+# Cloudinary
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your_cloud_name"
+CLOUDINARY_API_KEY="your_api_key"
+CLOUDINARY_API_SECRET="your_api_secret"
+CLOUDINARY_URL="cloudinary://API_KEY:API_SECRET@CLOUD_NAME"
+4. Database Setup
+Push the Prisma schema to your Supabase PostgreSQL database and generate the Prisma client:
 
-## 🛠️ Teknologi
+Bash
+npx prisma db push
+npx prisma generate
+5. Seed the Database
+Populate the database with dummy locations (e.g., LRT Rasuna Said, Stasiun Manggarai) for the smart search dropdown:
 
-### Tech Stack
+Bash
+npx prisma db seed
+(Note: Ensure you have ts-node configured in your package.json for the seed script to run).
 
-#### Frontend
-- **Framework**: Next.js (React.js)
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand / React Context
-- **Icons & UI Components**: Lucide React & Radix UI (shadcn/ui)
+6. Run the Development Server
+Bash
+npm run dev
 
-#### Backend
-- **Framework**: Next.js API Routes (Serverless) / Node.js Express
-- **Authentication**: NextAuth.js (Google OAuth & JWT credentials)
-- **File Storage**: Supabase Storage / Cloudinary
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-#### Database
-- **Relational Database**: PostgreSQL (Hosted on Neon / Supabase)
-- **ORM**: Prisma (Type-safe database client)
+## 🧪 Testing (God Mode)
 
-#### Deployment & CI/CD
-- **Hosting**: Vercel (Frontend & Serverless API)
-- **Version Control & CI**: GitHub / GitHub Actions
+For presentation and testing purposes, logging in with specific Project Lead emails (e.g., `dhanny.aljael@gmail.com` or `gheageltra@gmail.com`) grants access to the **God Mode Role Switcher** in the navigation bar. This allows instant role switching between `USER`, `ADMIN`, and `TECH` to seamlessly demonstrate the entire app flow.
 
----
-
-## ⚙️ Arsitektur Sistem (Workflow)
-
-1. **Scan & Detect**: Penumpang memindai QR Code di Halte TransJakarta (Contoh ID: `TJ-DA-01`).
-2. **Report**: Antarmuka web terbuka. Penumpang login via Google, memotret fasilitas yang rusak, dan mengirim laporan.
-3. **Validate**: Laporan masuk ke *Community Feed*. Penumpang lain di lokasi yang sama mengklik tombol "Sama-sama Terdampak" (Upvote).
-4. **Dispatch**: Setelah mencapai batas minimal Upvote, Kepala Halte (Admin) menerima tiket dan meneruskannya ke akun Teknisi Lapangan.
-5. **Resolve**: Teknisi memperbaiki fasilitas, mengambil *Live Photo* bukti perbaikan via HP, dan menutup tiket (Status: Selesai).
-
----
-
-## 🚀 Instalasi & Setup
-
-Panduan menjalankan proyek ini secara lokal untuk *development*:
-
-1. **Clone repository**
-   ```bash
-   git clone [https://github.com/killudha/fasilicare.git](https://github.com/killudha/fasilicare.git)
-   cd fasilicare
+## 🤝 Credits
+*   **Project Leads:** Dhanny & Ghea
+*   **Event:** ITECHNO CUP 2026

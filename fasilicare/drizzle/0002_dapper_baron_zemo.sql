@@ -1,0 +1,1 @@
+ALTER TABLE `upvotes` ADD CONSTRAINT `upvotes_user_ticket_unique` UNIQUE(`userId`,`ticketId`);

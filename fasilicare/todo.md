@@ -1,0 +1,123 @@
+# Project TODO
+
+- [x] Establish FasiliCare domain schema for users, locations, tickets, and upvotes in the existing full-stack template
+- [x] Add lead-email role promotion and expose current user role through the existing session contract
+- [x] Add lead-only God Mode role switcher and protected role update workflow
+- [x] Add seeded transport locations: LRT Rasuna Said, Stasiun Tebet, Stasiun Manggarai, and Halte Rasuna Said
+- [x] Add typed ticket queries and mutations with PENDING, APPROVED, IN_PROGRESS, and RESOLVED status handling
+- [x] Enforce one upvote per signed-in user with a database uniqueness constraint
+- [x] Build responsive Sunset Pop shared navigation and visual design system
+- [x] Build public community feed with ticket cards, status labels, and upvote actions
+- [x] Build authenticated report flow with searchable locations, validation, and direct unsigned Cloudinary upload
+- [x] Build ADMIN triage dashboard with approve and start-work actions
+- [x] Build TECH task board with live-proof Cloudinary upload and resolve action
+- [x] Add login experience and role-aware navigation/empty states
+- [x] Add Vitest coverage for lead rules, Cloudinary configuration, and existing auth logout behavior
+- [x] Run typecheck, tests, build, and visual verification for the primary routes
+- [x] Document the managed template constraint: the delivered runtime uses its supplied single OAuth entrypoint, while the product login surface is Google-only in copy; standalone NextAuth.js requires migrating away from the managed runtime
+- [x] Track standalone Google-only NextAuth.js as a documented deferred migration because the managed runtime supplies its own OAuth/session layer
+- [x] Fix community feed query failure caused by the grouped upvote join and add regression coverage
+- [x] Add a regression test that exercises the community feed query shape with grouped upvotes
+- [x] Fix evidence-photo and live-proof Cloudinary uploads and add regression coverage
+- [x] Add component-level Cloudinary upload regression coverage and verify a successful secure_url response
+- [x] Add a true CloudinaryUpload component interaction test that verifies file selection updates the returned secure_url state
+- [x] Perbaiki pencarian stations/halte pada form report dan tambahkan regression test untuk filtering lokasi
+- [x] Baca pasted_content_2.txt, petakan fitur tambahan, dan implementasikan bagian yang belum ada di FasiliCare
+- [x] Tambahkan urgency LOW/MEDIUM/HIGH pada ticket dan form report
+- [x] Tambahkan komentar ticket, halaman detail ticket, dan forum diskusi
+- [x] Tambahkan recent reports per lokasi pada form report
+- [x] Tambahkan reward reputation +10 saat report dan +50 saat resolve
+- [x] Tambahkan halaman echoes untuk ticket RESOLVED dengan filter lokasi
+- [x] Tambahkan halaman profile dengan avatar Google, nama, reputation, dan level
+- [x] Tambahkan feed IN_PROGRESS, sort admin berdasarkan urgency lalu upvote, dan tampilkan date/time
+- [x] Tambahkan loading/error state pada forum komentar ticket
+- [x] Tambahkan error state recent reports pada form report
+- [x] Tambahkan loading/error state pada Echoes dan Profile
+- [x] Persist/update Google image saat user login ulang
+- [x] Wire Google avatar dari auth callback ke upsertUser/session dan tambahkan regression test image persistence
+- [x] Tambahkan test persistensi users.image melalui upsertUser dan verifikasi output profile/session
+- [x] Tambahkan test authenticated-user/session path yang memastikan image avatar tersedia setelah login dan login ulang
+- [x] Uji re-login avatar A ke avatar B lalu verifikasi auth.me dan profile mengembalikan avatar terbaru
+- [x] Baca pasted_content_3.txt, petakan fitur tambahan, dan implementasikan bagian yang belum ada di FasiliCare
+- [x] Tambahkan urgency CRITICAL dan category ticket/report
+- [x] Tambahkan notification bell, tabel notifications, dan notifikasi untuk upvote/comment/status change
+- [x] Tambahkan filter text/tanggal/lokasi pada Echoes
+- [x] Tambahkan Admin edit issueDesc/category/status dan delete ticket
+- [x] Tambahkan reward guide yang menjelaskan +10 report dan +50 resolved
+- [x] Tambahkan next.config.js atau dokumentasi setara untuk Google PFP sesuai runtime yang tersedia
+- [x] Pastikan admin delete ticket menghapus dependent comments/upvotes secara aman dan verifikasi pada ticket berisi relasi
+- [x] Pisahkan validasi Cloudinary deterministik dari smoke test jaringan agar suite tidak gagal karena timeout eksternal
+- [x] Baca pasted_content_4.txt, petakan fitur tambahan, dan implementasikan bagian yang belum ada di FasiliCare
+- [x] Perbaiki email lead kedua menjadi ghea.geltra@gmail.com di role switcher, backend, dan test
+- [x] Tambahkan hamburger menu mobile dengan role switcher di dalamnya
+- [x] Pertahankan notification history yang sudah dibaca dan bedakan styling-nya
+- [x] Ganti prompt admin edit dengan Dialog UI
+- [x] Buat kartu Echoes dapat dibuka ke detail ticket
+- [x] Tambahkan edit profile picture melalui Cloudinary dan level reputation baru
+- [x] Tambahkan edit komentar milik sendiri
+- [x] Tambahkan duplicate warning, My Reports timeline, assignment technician, dan analytics dashboard
+- [x] Tambahkan assignedTechId, endpoint assign technician, dan task board yang hanya menampilkan ticket assigned
+- [x] Tambahkan duplicate-detection warning eksplisit saat lokasi dipilih dan laporan aktif serupa ditemukan
+- [x] Ubah My Reports menjadi tracking timeline status yang jelas
+- [x] Tambahkan threshold community validation berbasis jumlah upvote sebelum approval admin
+- [x] Audit dan dokumentasikan roadmap pasted_content_4 yang belum sepenuhnya tersedia
+- [x] Enforce threshold community validation pada assign/adminEdit dan tambahkan test blocked vs allowed
+- [x] Simpan dokumen audit roadmap pasted_content_4 berisi item selesai, deferred, dan batasan runtime
+- [x] Tambahkan regression test assign dan adminEdit untuk skenario diblokir sebelum upvote dan berhasil setelah upvote
+
+- [x] Apply additive startedAt/resolvedAt schema migration
+- [x] Add technician Start Repair and Finish Repair workflow with timestamps
+- [x] Add expanded Jakarta MRT/LRT/KRL/TransJakarta seed locations
+- [x] Add dynamic public profile route and public report list
+- [x] Add admin user management UI at /admin/users
+- [x] Add advanced ticket management UI at /admin/tickets
+- [x] Link author names to public profiles and show ticket timeline timestamps
+- [x] Add transport-themed motion and status-dot polish
+- [x] Update Indonesian civic copy across home/report surfaces
+- [x] Add or update Vitest regression coverage for V5 features
+- [x] Run typecheck, tests, build, and visual verification
+- [x] Save final checkpoint
+
+- [x] Add full edit controls to /admin/tickets for issue description, category, and urgency
+- [x] Link comment author names to /profile/:id and show exact timestamps in My Reports timeline
+- [x] Implement stronger transport motion and status-specific live dots with reduced-motion safety
+- [x] Complete Bahasa Indonesia copy pass across remaining Home and Report states
+- [x] Add regression tests for admin management, public profile, and timeline behavior
+
+- [x] Add regression tests for admin role changes and safe user deletion
+- [x] Add regression tests for advanced ticket CRUD fields
+- [x] Complete remaining Bahasa Indonesia copy in Home and Report
+- [x] Verify timeline timestamp data contract in a dedicated regression test
+
+- [x] Translate remaining user-facing Home/Report labels and success/error messages to Bahasa Indonesia
+- [x] Add dedicated tickets.mine regression test asserting startedAt/resolvedAt timeline fields
+
+- [x] Localize remaining status, priority, category, fallback, and image labels in Home/Report
+- [x] Exercise appRouter tickets.mine procedure directly in timeline regression test
+
+## pasted_content_6 presentation refinements (restored after sandbox reset)
+- [x] Audit pasted_content_6 against the managed React/tRPC runtime and existing FasiliCare implementation
+- [x] Expand and verify categorized Jakarta transit location coverage and report search usability
+- [x] Complete English localization across Home, Report, AdminTickets, and core workflow surfaces
+- [x] Add minimalist train skeleton loader, urgency/status dots, staggered card entrances, and reduced-motion handling
+- [x] Add elegant empty states for Echoes and technician board
+- [x] Add copy-link sharing action to Ticket detail
+- [x] Add regression coverage for transit-backed flows and ticket sharing helper
+- [x] Run production build and visual verification for pasted_content_6
+- [x] Save pasted_content_6 checkpoint
+
+## pasted_content_7 enterprise overhaul
+- [ ] Map Prisma/Next.js requirements to the managed Drizzle/tRPC/React runtime and document compatibility choices
+- [ ] Add Flag schema/migration with ticket/user relations, unique protection, reason, and createdAt
+- [ ] Add authenticated flag API and report-hoax UI with admin flagged-ticket visibility
+- [ ] Verify exhaustive categorized Jakarta transit seed coverage including all specified MRT/LRT/KRL/TransJakarta locations
+- [ ] Add admin analytics default view with reporters, points, and most-flagged locations
+- [ ] Extend admin ticket triage with flagged-ticket review and complete inline CRUD
+- [ ] Extend admin user CRUD with inline name/role/reputation editing
+- [ ] Add CSV/XLSX bulk user import and downloadable template
+- [ ] Add public Echoes analytics bento metrics and most-active locations
+- [ ] Make duplicate warning on Report link directly to the matching ticket
+- [ ] Add stronger Gen Z bento/glassmorphism styling, page transitions, tilt/scale/glow interactions
+- [ ] Add regression coverage for flags, analytics, import parsing, and duplicate links
+- [ ] Run typecheck, tests, build, and visual verification
+- [ ] Save pasted_content_7 checkpoint
