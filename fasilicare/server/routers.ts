@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { addComment, addUpvote, createNotification, createTicket, deleteTicket, deleteUser, getPublicProfile, getTicket, getUserById, getUserProfile, hasUpvoted, isLeadEmail, COMMUNITY_VALIDATION_THRESHOLD, listComments, listLocations, listNotifications, listUnreadNotifications, listTickets, listTechnicians, listUsers, markNotificationsRead, seedLocations, updateComment, updateTicket, updateUserImage, updateUserRole } from "./db";
+import { sdk } from "./_core/sdk";
+import { addComment, addUpvote, createNotification, createTicket, deleteTicket, deleteUser, flagHoax, getPublicProfile, getTicket, getUserById, getUserProfile, hasUpvoted, importUsers, isLeadEmail, COMMUNITY_VALIDATION_THRESHOLD, listComments, listHoaxFlags, listLocations, listNotifications, listUnreadNotifications, listTickets, listTechnicians, listUsers, markNotificationsRead, seedLocations, updateComment, updateTicket, updateUser, updateUserImage, updateUserRole, upsertUser } from "./db";
 
 const roleSchema = z.enum(["user", "admin", "tech"]);
 async function ensureValidated(ticketId: number, status: string) { const ticket = await getTicket(ticketId); if (!ticket) throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found." }); if ((status === "approved" || status === "resolved") && ticket.upvoteCount < COMMUNITY_VALIDATION_THRESHOLD) throw new TRPCError({ code: "PRECONDITION_FAILED", message: `Community validation needs at least ${COMMUNITY_VALIDATION_THRESHOLD} support.` }); return ticket; }
@@ -24,6 +25,13 @@ export const appRouter = router({
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => { ctx.res.clearCookie(COOKIE_NAME, { ...getSessionCookieOptions(ctx.req), maxAge: -1 }); return { success: true } as const; }),
+    demoLogin: publicProcedure.input(z.object({ role: roleSchema })).mutation(async ({ ctx, input }) => {
+      const profiles = { admin: { openId: "demo-admin", name: "Demo Admin", email: "demo.admin@fasilicare.local" }, user: { openId: "demo-commuter", name: "Demo Commuter", email: "demo.commuter@fasilicare.local" }, tech: { openId: "demo-technician", name: "Demo Technician", email: "demo.tech@fasilicare.local" } } as const;
+      const profile = profiles[input.role];
+      const token = await sdk.createSessionToken(profile.openId, { name: profile.name });
+      ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+      return { success: true as const };
+    }),
   }),
   locations: router({ list: publicProcedure.query(() => listLocations()), seed: protectedProcedure.mutation(() => seedLocations()) }),
   tickets: router({
@@ -46,10 +54,11 @@ export const appRouter = router({
     resolve: techProcedure.input(z.object({ ticketId: z.number().int().positive(), proofUrl: z.string().url() })).mutation(({ input }) => updateTicket(input.ticketId, { status: "resolved", proofUrl: input.proofUrl, resolvedAt: new Date() })),
     addComment: protectedProcedure.input(z.object({ ticketId: z.number().int().positive(), text: z.string().trim().min(2).max(500) })).mutation(({ ctx, input }) => addComment({ ...input, userId: ctx.user.id })),
     editComment: protectedProcedure.input(z.object({ commentId: z.number().int().positive(), text: z.string().trim().min(2).max(500) })).mutation(({ ctx, input }) => updateComment(input.commentId, ctx.user.id, input.text)),
+    flagHoax: protectedProcedure.input(z.object({ ticketId: z.number().int().positive(), reason: z.string().trim().max(500).optional() })).mutation(({ ctx, input }) => flagHoax({ ...input, reporterId: ctx.user.id })),
   }),
-  admin: router({ users: adminProcedure.query(() => listUsers()), updateUserRole: adminProcedure.input(z.object({ userId: z.number().int().positive(), role: roleSchema })).mutation(({ input }) => updateUserRole(input.userId, input.role)), deleteUser: adminProcedure.input(z.object({ userId: z.number().int().positive() })).mutation(({ input }) => deleteUser(input.userId)), tickets: adminProcedure.query(() => listTickets()), forceUpdate: adminProcedure.input(z.object({ ticketId: z.number().int().positive(), status: statusSchema })).mutation(({ input }) => updateTicket(input.ticketId, { status: input.status })), deleteTicket: adminProcedure.input(z.object({ ticketId: z.number().int().positive() })).mutation(({ input }) => deleteTicket(input.ticketId)) }),
+  admin: router({ users: adminProcedure.query(() => listUsers()), updateUserRole: adminProcedure.input(z.object({ userId: z.number().int().positive(), role: roleSchema })).mutation(({ input }) => updateUserRole(input.userId, input.role)), updateUser: adminProcedure.input(z.object({ userId: z.number().int().positive(), name: z.string().trim().max(200).nullable().optional(), email: z.string().email().nullable().optional(), role: roleSchema.optional(), reputationPoints: z.number().int().min(0).optional() })).mutation(({ input }) => updateUser(input.userId, input)), importUsers: adminProcedure.input(z.array(z.object({ openId: z.string().min(1), name: z.string().nullable().optional(), email: z.string().email().nullable().optional(), role: roleSchema.optional() }))).mutation(({ input }) => importUsers(input)), hoaxFlags: adminProcedure.query(() => listHoaxFlags()), deleteUser: adminProcedure.input(z.object({ userId: z.number().int().positive() })).mutation(({ input }) => deleteUser(input.userId)), tickets: adminProcedure.query(() => listTickets()), forceUpdate: adminProcedure.input(z.object({ ticketId: z.number().int().positive(), status: statusSchema })).mutation(({ input }) => updateTicket(input.ticketId, { status: input.status })), deleteTicket: adminProcedure.input(z.object({ ticketId: z.number().int().positive() })).mutation(({ input }) => deleteTicket(input.ticketId)) }),
   publicProfiles: router({ detail: publicProcedure.input(z.object({ userId: z.number().int().positive() })).query(({ input }) => getPublicProfile(input.userId)) }),
-  analytics: adminProcedure.query(async () => { const rows = await listTickets(); const byCategory = rows.reduce<Record<string, number>>((acc, row) => { const key = row.category || "Other"; acc[key] = (acc[key] || 0) + 1; return acc; }, {}); const byLocation = rows.reduce<Record<string, number>>((acc, row) => { const key = row.locationName || "Unknown"; acc[key] = (acc[key] || 0) + 1; return acc; }, {}); return { total: rows.length, resolved: rows.filter(row => row.status === "resolved").length, byCategory, byLocation }; }),
+  analytics: adminProcedure.query(async () => { const [rows, people] = await Promise.all([listTickets(), listUsers()]); const byCategory = rows.reduce<Record<string, number>>((acc, row) => { const key = row.category || "Other"; acc[key] = (acc[key] || 0) + 1; return acc; }, {}); const byLocation = rows.reduce<Record<string, number>>((acc, row) => { const key = row.locationName || "Unknown"; acc[key] = (acc[key] || 0) + 1; return acc; }, {}); const topUsers = [...people].sort((a, b) => (b.reputationPoints ?? b.reputation) - (a.reputationPoints ?? a.reputation)).slice(0, 3); return { total: rows.length, resolved: rows.filter(row => row.status === "resolved").length, byCategory, byLocation, topUsers }; }),
   notifications: router({
     unread: protectedProcedure.query(({ ctx }) => listUnreadNotifications(ctx.user.id)), history: protectedProcedure.query(({ ctx }) => listNotifications(ctx.user.id)),
     markRead: protectedProcedure.mutation(({ ctx }) => markNotificationsRead(ctx.user.id)),

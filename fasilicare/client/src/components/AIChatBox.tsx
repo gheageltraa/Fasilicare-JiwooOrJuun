@@ -85,7 +85,7 @@ export type AIChatBoxProps = {
  *       }]);
  *     },
  *     onError: (error) => {
- *       console.error("Chat error:", error);
+ * report the error through the application notification layer.
  *       // Optionally show error message to user
  *     }
  *   });

@@ -19,10 +19,21 @@ import type {
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;
 
+function buildDemoUser(openId: string, name: string): User {
+  const role = openId === "demo-admin" ? "admin" : openId === "demo-technician" ? "tech" : "user";
+  return { id: 0, openId, name, email: `${openId}@fasilicare.local`, loginMethod: "demo", image: null, reputation: 0, reputationPoints: 0, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
+}
+
+function buildGoogleUser(openId: string, name: string, email: string | null, role: User["role"] = "user"): User {
+  return { id: 0, openId, name, email, loginMethod: "google", image: null, reputation: 0, reputationPoints: 0, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
+}
+
 export type SessionPayload = {
   openId: string;
   appId: string;
   name: string;
+  email?: string | null;
+  role?: User["role"];
 };
 
 const EXCHANGE_TOKEN_PATH = `/webdev.v1.WebDevAuthPublicService/ExchangeToken`;
@@ -166,13 +177,15 @@ class SDKServer {
    */
   async createSessionToken(
     openId: string,
-    options: { expiresInMs?: number; name?: string } = {}
+    options: { expiresInMs?: number; name?: string; email?: string | null; role?: User["role"] } = {}
   ): Promise<string> {
     return this.signSession(
       {
         openId,
-        appId: ENV.appId,
+        appId: ENV.appId || "fasilicare-demo",
         name: options.name || "",
+        email: options.email,
+        role: options.role,
       },
       options
     );
@@ -191,6 +204,8 @@ class SDKServer {
       openId: payload.openId,
       appId: payload.appId,
       name: payload.name,
+      email: payload.email,
+      role: payload.role,
     })
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setExpirationTime(expirationSeconds)
@@ -199,7 +214,7 @@ class SDKServer {
 
   async verifySession(
     cookieValue: string | undefined | null
-  ): Promise<{ openId: string; appId: string; name: string } | null> {
+  ): Promise<{ openId: string; appId: string; name: string; email: string | null; role: User["role"] } | null> {
     if (!cookieValue) {
       console.warn("[Auth] Missing session cookie");
       return null;
@@ -225,6 +240,8 @@ class SDKServer {
         openId,
         appId,
         name,
+        email: typeof payload.email === "string" ? payload.email : null,
+          role: payload.role === "admin" || payload.role === "tech" || payload.role === "user" ? payload.role : "user",
       };
     } catch (error) {
       console.warn("[Auth] Session verification failed", String(error));
@@ -288,7 +305,23 @@ class SDKServer {
 
     const sessionUserId = session.openId;
     const signedInAt = new Date();
-    let user = await db.getUserByOpenId(sessionUserId);
+    let user: User | undefined;
+    try {
+      user = await db.getUserByOpenId(sessionUserId);
+    } catch (error) {
+      console.warn("[Auth] Database lookup unavailable; using session identity", error);
+    }
+    if (!user) {
+      if (sessionUserId.startsWith("demo-")) {
+        return buildDemoUser(sessionUserId, session.name);
+      }
+
+      // Keep OAuth usable while the database is waking up. The next request
+      // will use the persisted record automatically once the connection works.
+      if (sessionUserId.startsWith("google:")) {
+        return buildGoogleUser(sessionUserId, session.name, session.email, session.role);
+      }
+    }
 
     // If user not in DB, sync from OAuth server automatically
     if (!user) {
