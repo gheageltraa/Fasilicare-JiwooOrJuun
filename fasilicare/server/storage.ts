@@ -1,6 +1,8 @@
-// Preconfigured storage helpers for Manus WebDev templates
+// Preconfigured storage helpers.
+// Preconfigured storage helpers.
 // Uploads via Forge Server presigned URL to S3 (PUT direct).
-// Downloads return /manus-storage/{key} paths served via 307 redirect.
+// Downloads return /storage/{key} paths served via 307 redirect.
+// Downloads return /storage/{key} paths served via 307 redirect.
 
 import { ENV } from "./_core/env";
 
@@ -68,12 +70,12 @@ export async function storagePut(
     throw new Error(`Storage upload to S3 failed (${uploadResp.status})`);
   }
 
-  return { key, url: `/manus-storage/${key}` };
+  return { key, url: `/storage/${key}` };
 }
 
 export async function storageGet(relKey: string): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
-  return { key, url: `/manus-storage/${key}` };
+  return { key, url: `/storage/${key}` };
 }
 
 export async function storageGetSignedUrl(relKey: string): Promise<string> {

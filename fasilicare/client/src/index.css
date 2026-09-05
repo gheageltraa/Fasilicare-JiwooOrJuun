@@ -14,6 +14,7 @@
 .dark .bg-orange-50, .dark .bg-orange-50\/40, .dark .bg-orange-50\/60 { background-color: var(--muted); }
 .dark .bg-orange-100 { background-color: oklch(0.32 0.07 55); }
 .dark .text-slate-700 { color: var(--foreground); }
+.dark header a .font-black { color: white; }
 * { @apply border-border outline-ring/50; }
 html { scroll-behavior: smooth; }
 body { @apply bg-background text-foreground; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }

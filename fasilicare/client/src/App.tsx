@@ -7,8 +7,6 @@ import { Echoes, Profile } from "@/pages/Additional";
 import Analytics from "@/pages/Analytics";
 import { Admin, Login, Tech } from "@/pages/Operations";
 import PublicProfile from "@/pages/PublicProfile";
-import AdminUsers from "@/pages/AdminUsers";
-import AdminTickets from "@/pages/AdminTickets";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -25,8 +23,6 @@ function Router() {
       <Route path={"/echoes"} component={Echoes} />
       <Route path={"/profile"} component={Profile} />
       <Route path={"/profile/:id"} component={PublicProfile} />
-      <Route path={"/admin/users"} component={AdminUsers} />
-      <Route path={"/admin/tickets"} component={AdminTickets} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/admin/analytics"} component={Analytics} />
       <Route path={"/tech"} component={Tech} />
