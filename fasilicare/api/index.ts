@@ -1,3 +1,5 @@
-import { createApp } from "../server/_core/index";
+import app, { createApp } from "../server/_core/index";
 
-export default await createApp();
+await createApp(app);
+
+export default app;

@@ -7,7 +7,9 @@ import { registerLocalAuthRoutes } from "./localAuth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { serveStatic, setupVite } from "./vite";
+import { setupVite } from "./vite";
+
+export const app = express();
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -28,32 +30,30 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
-export async function createApp(app = express(), server = createServer(app)) {
+export async function createApp(appInstance = app, server = createServer(appInstance)) {
   // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  registerStorageProxy(app);
-  registerLocalAuthRoutes(app);
+  appInstance.use(express.json({ limit: "50mb" }));
+  appInstance.use(express.urlencoded({ limit: "50mb", extended: true }));
+  appInstance.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+  registerStorageProxy(appInstance);
+  registerLocalAuthRoutes(appInstance);
   // tRPC API
-  app.use(
+  appInstance.use(
     "/api/trpc",
     createExpressMiddleware({
       router: appRouter,
       createContext,
     })
   );
-  // development mode uses Vite, production mode uses static files
-  if (process.env.NODE_ENV === "development" && !process.env.VERCEL) {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  // Vercel serves the frontend separately; only local development needs Vite.
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    await setupVite(appInstance, server);
   }
 
-  return app;
+  return appInstance;
 }
 
 async function startServer() {
-  const app = express();
   const server = createServer(app);
   await createApp(app, server);
   const preferredPort = parseInt(process.env.PORT || "3000");
@@ -68,4 +68,8 @@ async function startServer() {
   });
 }
 
-if (!process.env.VERCEL) startServer().catch(console.error);
+if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+  startServer().catch(console.error);
+}
+
+export default app;
