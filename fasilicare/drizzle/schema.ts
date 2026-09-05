@@ -1,4 +1,4 @@
-﻿import { foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
+﻿import { boolean, foreignKey, integer, pgEnum, pgTable, serial, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 
 export const roleValues = ["user", "admin", "tech"] as const;
 export type Role = (typeof roleValues)[number];
@@ -14,9 +14,10 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(), openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"), email: varchar("email", { length: 320 }), loginMethod: varchar("loginMethod", { length: 64 }), image: text("image"),
   reputation: integer("reputation").default(0).notNull(), reputationPoints: integer("reputation_points").default(0).notNull(),
+  isBanned: boolean("is_banned").default(false).notNull(),
   role: roleEnum("role").default("user").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().notNull(), lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
-export const locations = pgTable("locations", { id: serial("id").primaryKey(), name: varchar("name", { length: 180 }).notNull().unique(), type: varchar("type", { length: 40 }).notNull(), createdAt: timestamp("createdAt").defaultNow().notNull() });
+export const locations = pgTable("locations", { id: serial("id").primaryKey(), name: varchar("name", { length: 180 }).notNull().unique(), type: varchar("type", { length: 40 }).notNull(), isVerified: boolean("is_verified").default(true).notNull(), createdAt: timestamp("createdAt").defaultNow().notNull() });
 export const tickets = pgTable("tickets", {
   id: serial("id").primaryKey(), issueDesc: text("issueDesc").notNull(), category: varchar("category", { length: 60 }), photoUrl: text("photoUrl").notNull(), proofUrl: text("proofUrl"),
   status: ticketStatusEnum("status").default("pending").notNull(), urgency: urgencyEnum("urgency").default("low").notNull(), authorId: integer("authorId").notNull(), assignedTechId: integer("assignedTechId"), startedAt: timestamp("started_at"), resolvedAt: timestamp("resolvedAt"), completedAt: timestamp("completed_at"), locationId: integer("locationId").notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().notNull(),

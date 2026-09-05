@@ -21,11 +21,11 @@ const isNonEmptyString = (value: unknown): value is string =>
 
 function buildDemoUser(openId: string, name: string): User {
   const role = openId === "demo-admin" ? "admin" : openId === "demo-technician" ? "tech" : "user";
-  return { id: 0, openId, name, email: `${openId}@fasilicare.local`, loginMethod: "demo", image: null, reputation: 0, reputationPoints: 0, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
+  return { id: 0, openId, name, email: `${openId}@fasilicare.local`, loginMethod: "demo", image: null, reputation: 0, reputationPoints: 0, isBanned: false, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
 }
 
 function buildGoogleUser(openId: string, name: string, email: string | null, role: User["role"] = "user"): User {
-  return { id: 0, openId, name, email, loginMethod: "google", image: null, reputation: 0, reputationPoints: 0, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
+  return { id: 0, openId, name, email, loginMethod: "google", image: null, reputation: 0, reputationPoints: 0, isBanned: false, role, createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
 }
 
 export type SessionPayload = {
