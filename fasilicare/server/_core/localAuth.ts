@@ -1,9 +1,10 @@
-import type { Express, Request, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
-import { createLocalUser, getUserByLogin, verifyPassword } from "../db";
+import { createLocalUser, getUserByLogin, getUserByOpenId, upsertUser, verifyPassword } from "../db";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -20,7 +21,30 @@ function sendError(res: Response, status: number, message: string) {
 }
 
 export function registerLocalAuthRoutes(app: Express) {
-  app.post("/api/register", async (req: Request, res: Response) => {
+  app.post("/api/auth/supabase", async (req: Request, res: Response, _next: NextFunction) => {
+    const accessToken = typeof req.body?.accessToken === "string" ? req.body.accessToken : "";
+    const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
+    if (!accessToken || !supabaseUrl || !supabaseKey) return sendError(res, 400, "Google sign-in is not configured.");
+    try {
+      const client = createClient(supabaseUrl, supabaseKey);
+      const { data, error } = await client.auth.getUser(accessToken);
+      if (error || !data.user?.email) return sendError(res, 401, "Google sign-in session is invalid.");
+      const profile = data.user.user_metadata as { full_name?: string; name?: string; avatar_url?: string };
+      const openId = `supabase:${data.user.id}`;
+      await upsertUser({ openId, email: data.user.email.toLowerCase(), name: profile.full_name ?? profile.name ?? data.user.email, image: profile.avatar_url ?? null, loginMethod: "supabase" });
+      const user = await getUserByOpenId(openId);
+      if (!user) return sendError(res, 500, "Could not create your Google profile.");
+      const token = await sdk.createSessionToken(openId, { name: user.name ?? data.user.email, email: user.email, role: user.role });
+      res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("[Auth] Supabase sign-in failed", error);
+      return sendError(res, 500, "Could not complete Google sign-in.");
+    }
+  });
+
+  app.post("/api/register", async (req: Request, res: Response, _next: NextFunction) => {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) return sendError(res, 400, "Enter a valid email, username, and password.");
     try {
@@ -36,7 +60,7 @@ export function registerLocalAuthRoutes(app: Express) {
     }
   });
 
-  app.post("/api/login", async (req: Request, res: Response) => {
+  app.post("/api/login", async (req: Request, res: Response, _next: NextFunction) => {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) return sendError(res, 400, "Enter your email or username and password.");
     try {
