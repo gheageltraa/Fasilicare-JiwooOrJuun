@@ -295,7 +295,7 @@ export function Profile() {
           <form className="rounded-3xl border border-orange-100 bg-white p-6" onSubmit={event => { event.preventDefault(); if (newPassword !== confirmPassword) { toast.error("Passwords do not match"); return; } changePassword.mutate({ currentPassword, newPassword }); }}>
             <h2 className="text-xl font-black">Change password</h2>
             <p className="mt-1 text-sm text-slate-500">Use at least 8 characters.</p>
-            <Label htmlFor="current-password" className="mt-5 block">Current password</Label><Input id="current-password" type="password" value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} className="mt-2" required />
+            {profile.data.loginMethod !== "supabase" && <><Label htmlFor="current-password" className="mt-5 block">Current password</Label><Input id="current-password" type="password" value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} className="mt-2" required /></>}
             <Label htmlFor="new-password" className="mt-4 block">New password</Label><Input id="new-password" type="password" value={newPassword} onChange={event => setNewPassword(event.target.value)} className="mt-2" minLength={8} required />
             <Label htmlFor="confirm-password" className="mt-4 block">Confirm new password</Label><Input id="confirm-password" type="password" value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} className="mt-2" minLength={8} required />
             <Button className="mt-4 w-full bg-[#102a43]" disabled={changePassword.isPending}>Update password</Button>

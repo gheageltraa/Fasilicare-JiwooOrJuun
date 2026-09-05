@@ -1,5 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { TRPCClientError } from "@trpc/client";
+import { apiUrl } from "@/const";
+import { supabase } from "@/lib/supabase";
 import { useCallback, useEffect, useMemo } from "react";
 
 type UseAuthOptions = {
@@ -42,8 +44,22 @@ export function useAuth(options?: UseAuthOptions) {
       } catch {}
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();
+      if (supabase) await supabase.auth.signOut();
     }
   }, [logoutMutation, utils]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    const syncSupabaseSession = async (accessToken?: string) => {
+      if (!accessToken || !active) return;
+      const response = await fetch(`${apiUrl}/api/auth/supabase`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ accessToken }) });
+      if (response.ok) await utils.auth.me.invalidate();
+    };
+    void supabase.auth.getSession().then(({ data }) => syncSupabaseSession(data.session?.access_token));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { void syncSupabaseSession(session?.access_token); });
+    return () => { active = false; listener.subscription.unsubscribe(); };
+  }, [utils]);
 
   const state = useMemo(() => {
     localStorage.setItem(

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { apiUrl } from "@/const";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { supabase } from "@/lib/supabase";
 import AdminDashboard from "./AdminDashboard";
 import {
   Card,
@@ -262,6 +263,7 @@ export function Login() {
               )}
             </form>
           </Form>
+          <GoogleButton />
           <p className="mt-5 text-center text-sm text-slate-500">
             New here?{" "}
             <Link href="/signup" className="font-bold text-orange-600">
@@ -271,6 +273,42 @@ export function Login() {
         </CardContent>
       </Card>
     </AuthShell>
+  );
+}
+
+export function GoogleButton() {
+  const [error, setError] = React.useState("");
+  const [pending, setPending] = React.useState(false);
+  const signInWithGoogle = async () => {
+    if (!supabase) {
+      setError("Google sign-in is not configured yet.");
+      return;
+    }
+    setError("");
+    setPending(true);
+    const { error: authError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/login" },
+    });
+    if (authError) {
+      setError(authError.message);
+      toast.error(authError.message);
+      setPending(false);
+    }
+  };
+  return (
+    <div className="mt-6">
+      <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+        <span className="h-px flex-1 bg-slate-200" />
+        <span>or continue with</span>
+        <span className="h-px flex-1 bg-slate-200" />
+      </div>
+      <Button type="button" variant="outline" disabled={pending} onClick={() => void signInWithGoogle()} className="mt-4 w-full border-slate-200 py-6 font-bold transition hover:border-orange-300 hover:bg-orange-50">
+        <span className="mr-2 grid size-6 place-items-center rounded-full bg-white text-sm font-black shadow-sm">G</span>
+        Sign in with Google
+      </Button>
+      {error && <p className="mt-2 text-center text-sm font-semibold text-red-600">{error}</p>}
+    </div>
   );
 }
 

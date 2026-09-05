@@ -6,7 +6,7 @@ import Report from "@/pages/Report";
 import Ticket from "@/pages/Ticket";
 import { Echoes, Profile } from "@/pages/Additional";
 import Analytics from "@/pages/Analytics";
-import { Admin, Login, Tech, AuthShell } from "@/pages/Operations";
+import { Admin, GoogleButton, Login, Tech, AuthShell } from "@/pages/Operations";
 import {
   Card,
   CardContent,
@@ -116,6 +116,7 @@ function Signup() {
               {registerError && <p className="text-sm font-semibold text-red-600">{registerError}</p>}
             </form>
           </Form>
+          <GoogleButton />
           <p className="mt-5 text-center text-sm text-slate-500">
             Already registered?{" "}
             <Link href="/login" className="font-bold text-orange-600">
