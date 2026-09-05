@@ -1,6 +1,5 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -10,24 +9,336 @@ import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth(); const [, navigate] = useLocation(); const utils = trpc.useUtils();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [, navigate] = useLocation();
+  const utils = trpc.useUtils();
   const { theme, toggleTheme } = useTheme();
-  const [role, setRole] = useState(user?.role ?? "user"); const [mobileOpen, setMobileOpen] = useState(false); const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const leadEmails = new Set(["dhanny.aljael@gmail.com", "ghea.geltra@gmail.com"]);
-  const lead = isAuthenticated && !!user?.email && leadEmails.has(user.email.trim().toLowerCase());
-  useEffect(() => { setRole(user?.role ?? "user"); }, [user?.role]);
-  const unread = trpc.notifications.unread.useQuery(undefined, { enabled: isAuthenticated }); const history = trpc.notifications.history.useQuery(undefined, { enabled: isAuthenticated });
-  const roleMutation = trpc.user.role.useMutation({ onSuccess: async () => { toast.success("Demo role updated"); await utils.auth.me.invalidate(); await utils.auth.me.refetch(); }, onError: e => toast.error(e.message) });
-  const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => { utils.notifications.unread.invalidate(); utils.notifications.history.invalidate(); } });
+  const [role, setRole] = useState(user?.role ?? "user");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const leadEmails = new Set([
+    "dhanny.aljael@gmail.com",
+    "ghea.geltra@gmail.com",
+  ]);
+  const lead =
+    isAuthenticated &&
+    !!user?.email &&
+    leadEmails.has(user.email.trim().toLowerCase());
+  useEffect(() => {
+    setRole(user?.role ?? "user");
+  }, [user?.role]);
+  const unread = trpc.notifications.unread.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const history = trpc.notifications.history.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const roleMutation = trpc.user.role.useMutation({
+    onSuccess: async () => {
+      toast.success("Demo role updated");
+      await utils.auth.me.invalidate();
+      await utils.auth.me.refetch();
+    },
+    onError: e => toast.error(e.message),
+  });
+  const markRead = trpc.notifications.markRead.useMutation({
+    onSuccess: () => {
+      utils.notifications.unread.invalidate();
+      utils.notifications.history.invalidate();
+    },
+  });
   const closeMobile = () => setMobileOpen(false);
-  const links = <><Link onClick={closeMobile} href="/" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Community</Link><Link onClick={closeMobile} href="/echoes" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Echoes</Link>{isAuthenticated && <><Link onClick={closeMobile} href="/report" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Report issue</Link><Link onClick={closeMobile} href="/profile" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Profile</Link></>}{user?.role === "admin" && <Link onClick={closeMobile} href="/admin" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Triage</Link>}{user?.role === "tech" && <Link onClick={closeMobile} href="/tech" className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100">Task board</Link>}</>;
-  const switcher = lead && <select aria-label="God Mode role switcher" value={role} onChange={e => { const next = e.target.value as "user" | "admin" | "tech"; setRole(next); roleMutation.mutate({ role: next }); }} className="rounded-full border border-orange-200 bg-white px-3 py-2 text-xs font-bold text-slate-900 dark:text-white"><option value="user">Demo: Reporter</option><option value="admin">Demo: Admin</option><option value="tech">Demo: Tech</option></select>;
-  return <header className="sticky top-0 z-40 border-b border-orange-100/80 bg-[#fffaf2]/95 backdrop-blur-xl"><div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4"><Link href="/" className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-2xl bg-[#102a43] text-lg text-orange-400 shadow-lg shadow-slate-900/10">✦</span><span><span className="block font-black tracking-tight text-[#102a43]">FasiliCare</span><span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-orange-600">keep moving</span></span></Link><nav className="hidden items-center gap-1 overflow-x-auto text-xs sm:flex sm:text-sm">{links}</nav><div className="flex items-center gap-2"><button type="button" aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} onClick={toggleTheme} className="grid size-9 place-items-center rounded-full text-slate-600 hover:bg-orange-100">{theme === "light" ? "☾" : "☀"}</button>{isAuthenticated && <div className="relative"><button type="button" aria-label="Notifications" onClick={() => { setNotificationsOpen(value => !value); if ((unread.data?.length ?? 0) > 0) markRead.mutate(); }} className="relative grid size-9 place-items-center rounded-full text-slate-600 hover:bg-orange-100"><Bell className="size-4" />{(unread.data?.length ?? 0) > 0 && <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-orange-500 text-[9px] font-black text-white">{unread.data?.length}</span>}</button>{notificationsOpen && <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-orange-100 bg-white p-3 shadow-xl"><p className="text-sm font-black text-[#102a43]">Notification history</p>{history.isLoading ? <p className="p-4 text-sm text-slate-500">Loading…</p> : history.isError ? <p className="p-4 text-sm text-red-700">Could not load notifications.</p> : history.data?.length ? <div className="mt-2 max-h-80 space-y-2 overflow-y-auto">{history.data.map(note => <p key={note.id} className={`rounded-xl p-3 text-xs leading-5 ${note.isRead ? "bg-slate-50 text-slate-500" : "bg-orange-50 font-semibold text-slate-700"}`}>{note.message}<span className="mt-1 block text-[10px] text-slate-400">{new Date(note.createdAt).toLocaleString()} · {note.isRead ? "Read" : "New"}</span></p>)}</div> : <p className="p-4 text-sm text-slate-500">You’re all caught up.</p>}</div>}</div>}{lead && <div className="hidden sm:block">{switcher}</div>}{isAuthenticated ? <Button variant="ghost" className="hidden rounded-full text-slate-600 sm:inline-flex" onClick={() => { logout(); navigate("/"); }}>Sign out</Button> : <Button className="hidden rounded-full bg-orange-500 px-5 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 sm:inline-flex" onClick={() => startLogin()}>Sign in</Button>}<button type="button" aria-label="Open navigation menu" onClick={() => setMobileOpen(value => !value)} className="grid size-10 place-items-center rounded-full text-[#102a43] hover:bg-orange-100 sm:hidden">{mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button></div></div>{mobileOpen && <div className="border-t border-orange-100 bg-[#fffaf2] px-5 pb-5 pt-3 sm:hidden"><nav className="flex flex-col gap-1">{links}</nav><div className="mt-3 flex flex-wrap items-center gap-2">{switcher}{isAuthenticated ? <Button variant="outline" className="rounded-full" onClick={() => { logout(); navigate("/"); closeMobile(); }}>Sign out</Button> : <Button className="rounded-full bg-orange-500 text-white" onClick={() => startLogin()}>Sign in</Button>}</div></div>}</header>;
+  const links = (
+    <>
+      <Link
+        onClick={closeMobile}
+        href="/"
+        className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+      >
+        Community
+      </Link>
+      <Link
+        onClick={closeMobile}
+        href="/echoes"
+        className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+      >
+        Echoes
+      </Link>
+      {isAuthenticated && (
+        <>
+          <Link
+            onClick={closeMobile}
+            href="/report"
+            className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+          >
+            Report issue
+          </Link>
+          <Link
+            onClick={closeMobile}
+            href="/profile"
+            className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+          >
+            Profile
+          </Link>
+        </>
+      )}
+      {user?.role === "admin" && (
+        <Link
+          onClick={closeMobile}
+          href="/admin"
+          className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+        >
+          Triage
+        </Link>
+      )}
+      {user?.role === "tech" && (
+        <Link
+          onClick={closeMobile}
+          href="/tech"
+          className="rounded-full px-3 py-2 font-semibold text-slate-600 hover:bg-orange-100"
+        >
+          Task board
+        </Link>
+      )}
+    </>
+  );
+  const switcher = lead && (
+    <select
+      aria-label="God Mode role switcher"
+      value={role}
+      onChange={e => {
+        const next = e.target.value as "user" | "admin" | "tech";
+        setRole(next);
+        roleMutation.mutate({ role: next });
+      }}
+      className="rounded-full border border-orange-200 bg-white px-3 py-2 text-xs font-bold text-slate-900 dark:text-white"
+    >
+      <option value="user">Demo: Reporter</option>
+      <option value="admin">Demo: Admin</option>
+      <option value="tech">Demo: Tech</option>
+    </select>
+  );
+  return (
+    <header className="sticky top-0 z-40 border-b border-orange-100/80 bg-[#fffaf2]/95 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
+        <Link href="/" className="flex items-center gap-3">
+          <span className="grid size-10 place-items-center rounded-2xl bg-[#102a43] text-lg text-orange-400 shadow-lg shadow-slate-900/10">
+            ✦
+          </span>
+          <span>
+            <span className="block font-black tracking-tight text-[#102a43]">
+              FasiliCare
+            </span>
+            <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-orange-600">
+              keep moving
+            </span>
+          </span>
+        </Link>
+        <nav className="hidden items-center gap-1 overflow-x-auto text-xs sm:flex sm:text-sm">
+          {links}
+        </nav>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            onClick={toggleTheme}
+            className="grid size-9 place-items-center rounded-full text-slate-600 hover:bg-orange-100"
+          >
+            {theme === "light" ? "☾" : "☀"}
+          </button>
+          {isAuthenticated && (
+            <div className="relative">
+              <button
+                type="button"
+                aria-label="Notifications"
+                onClick={() => {
+                  setNotificationsOpen(value => !value);
+                  if ((unread.data?.length ?? 0) > 0) markRead.mutate();
+                }}
+                className="relative grid size-9 place-items-center rounded-full text-slate-600 hover:bg-orange-100"
+              >
+                <Bell className="size-4" />
+                {(unread.data?.length ?? 0) > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-orange-500 text-[9px] font-black text-white">
+                    {unread.data?.length}
+                  </span>
+                )}
+              </button>
+              {notificationsOpen && (
+                <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-orange-100 bg-white p-3 shadow-xl">
+                  <p className="text-sm font-black text-[#102a43]">
+                    Notification history
+                  </p>
+                  {history.isLoading ? (
+                    <p className="p-4 text-sm text-slate-500">Loading…</p>
+                  ) : history.isError ? (
+                    <p className="p-4 text-sm text-red-700">
+                      Could not load notifications.
+                    </p>
+                  ) : history.data?.length ? (
+                    <div className="mt-2 max-h-80 space-y-2 overflow-y-auto">
+                      {history.data.map(note => (
+                        <p
+                          key={note.id}
+                          className={`rounded-xl p-3 text-xs leading-5 ${note.isRead ? "bg-slate-50 text-slate-500" : "bg-orange-50 font-semibold text-slate-700"}`}
+                        >
+                          {note.message}
+                          <span className="mt-1 block text-[10px] text-slate-400">
+                            {new Date(note.createdAt).toLocaleString()} ·{" "}
+                            {note.isRead ? "Read" : "New"}
+                          </span>
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="p-4 text-sm text-slate-500">
+                      You’re all caught up.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {lead && <div className="hidden sm:block">{switcher}</div>}
+          {isAuthenticated ? (
+            <Button
+              variant="ghost"
+              className="hidden rounded-full text-slate-600 sm:inline-flex"
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+            >
+              Sign out
+            </Button>
+          ) : (
+            <Button
+              className="hidden rounded-full bg-orange-500 px-5 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 sm:inline-flex"
+              onClick={() => navigate("/login")}
+            >
+              Sign in
+            </Button>
+          )}
+          <button
+            type="button"
+            aria-label="Open navigation menu"
+            onClick={() => setMobileOpen(value => !value)}
+            className="grid size-10 place-items-center rounded-full text-[#102a43] hover:bg-orange-100 sm:hidden"
+          >
+            {mobileOpen ? (
+              <X className="size-5" />
+            ) : (
+              <Menu className="size-5" />
+            )}
+          </button>
+        </div>
+      </div>
+      {mobileOpen && (
+        <div className="border-t border-orange-100 bg-[#fffaf2] px-5 pb-5 pt-3 sm:hidden">
+          <nav className="flex flex-col gap-1">{links}</nav>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {switcher}
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                className="rounded-full"
+                onClick={() => {
+                  logout();
+                  navigate("/");
+                  closeMobile();
+                }}
+              >
+                Sign out
+              </Button>
+            ) : (
+              <Button
+                className="rounded-full bg-orange-500 text-white"
+                onClick={() => {
+                  navigate("/login");
+                  closeMobile();
+                }}
+              >
+                Sign in
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
 }
 
-export function Footer() { return <footer className="border-t border-orange-100 bg-[#fffaf2] px-5 py-8 text-sm text-slate-500"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3"><span>© 2026 FasiliCare · Public transport care</span><a href="mailto:dhanny.aljael@gmail.com" className="font-bold text-orange-600 hover:text-orange-700">Contact Admin / Need Help?</a></div></footer>; }
+export function Footer() {
+  return (
+    <footer className="border-t border-orange-100 bg-[#fffaf2] px-5 py-8 text-sm text-slate-500">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
+        <span>© 2026 FasiliCare · Public transport care</span>
+        <a
+          href="mailto:dhanny.aljael@gmail.com"
+          className="font-bold text-orange-600 hover:text-orange-700"
+        >
+          Contact Admin / Need Help?
+        </a>
+      </div>
+    </footer>
+  );
+}
 
-export function CloudinaryUpload({ label, onUploaded }: { label: string; onUploaded: (url: string) => void }) {
-  const [uploading, setUploading] = useState(false); const upload = async (file?: File) => { if (!file || uploading) return; const cloud = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME; const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET; if (!cloud || !preset) { toast.error("Cloudinary upload is not configured yet."); return; } if (!file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) { toast.error("Please choose an image under 10 MB."); return; } setUploading(true); try { const data = await uploadImageToCloudinary(file, cloud, preset); onUploaded(data.secure_url); toast.success("Photo uploaded"); } catch (error) { toast.error(error instanceof Error ? error.message : "Could not upload photo. Try another image."); } finally { setUploading(false); } };
-  return <label className={`block rounded-2xl border-2 border-dashed p-5 text-center transition ${uploading ? "cursor-wait border-orange-300 bg-orange-50" : "cursor-pointer border-orange-200 bg-orange-50/60 hover:border-orange-400 hover:bg-orange-50"}`}><input type="file" accept="image/*" disabled={uploading} className="sr-only" onChange={e => { void upload(e.target.files?.[0]); e.currentTarget.value = ""; }} /><span className="text-sm font-bold text-[#102a43]">{uploading ? "Uploading securely…" : label}</span><span className="mt-1 block text-xs text-slate-500">JPG or PNG · max 10 MB · direct upload</span></label>;
+export function CloudinaryUpload({
+  label,
+  onUploaded,
+}: {
+  label: string;
+  onUploaded: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const upload = async (file?: File) => {
+    if (!file || uploading) return;
+    const cloud = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+    if (!cloud || !preset) {
+      toast.error("Cloudinary upload is not configured yet.");
+      return;
+    }
+    if (!file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) {
+      toast.error("Please choose an image under 10 MB.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const data = await uploadImageToCloudinary(file, cloud, preset);
+      onUploaded(data.secure_url);
+      toast.success("Photo uploaded");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not upload photo. Try another image."
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
+  return (
+    <label
+      className={`block rounded-2xl border-2 border-dashed p-5 text-center transition ${uploading ? "cursor-wait border-orange-300 bg-orange-50" : "cursor-pointer border-orange-200 bg-orange-50/60 hover:border-orange-400 hover:bg-orange-50"}`}
+    >
+      <input
+        type="file"
+        accept="image/*"
+        disabled={uploading}
+        className="sr-only"
+        onChange={e => {
+          void upload(e.target.files?.[0]);
+          e.currentTarget.value = "";
+        }}
+      />
+      <span className="text-sm font-bold text-[#102a43]">
+        {uploading ? "Uploading securely…" : label}
+      </span>
+      <span className="mt-1 block text-xs text-slate-500">
+        JPG or PNG · max 10 MB · direct upload
+      </span>
+    </label>
+  );
 }

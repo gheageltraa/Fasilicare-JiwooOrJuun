@@ -1,11 +1,16 @@
 import dotenv from "dotenv";
 dotenv.config({ path: new URL("../.env", import.meta.url) });
+import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
+import { promisify } from "node:util";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { comments, flags, hoaxFlags, locations, notifications, tickets, upvotes, users, type InsertUser, type Role, type TicketStatus, type Urgency } from "../drizzle/schema";
 import { getDatabaseUrl } from "./_core/databaseUrl";
 
 let _db: ReturnType<typeof drizzle> | null = null;
+const scrypt = promisify(scryptCallback);
+export async function hashPassword(password: string) { const salt = randomBytes(16).toString("hex"); const derived = await scrypt(password, salt, 64) as Buffer; return `${salt}:${derived.toString("hex")}`; }
+export async function verifyPassword(password: string, stored: string) { const [salt, hash] = stored.split(":"); if (!salt || !hash) return false; const derived = await scrypt(password, salt, 64) as Buffer; const expected = Buffer.from(hash, "hex"); return expected.length === derived.length && timingSafeEqual(expected, derived); }
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try { _db = drizzle(getDatabaseUrl(process.env.DATABASE_URL, process.env.DATABASE_POOLER_REGION)); } catch (error) { console.warn("[Database] Failed to connect:", error); }
@@ -29,7 +34,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 export async function getUserByOpenId(openId: string) { const db = await getDb(); if (!db) return undefined; const rows = await db.select().from(users).where(eq(users.openId, openId)).limit(1); return rows[0]; }
 export async function getUserById(id: number) { const db = await getDb(); if (!db) return undefined; const rows = await db.select().from(users).where(eq(users.id, id)).limit(1); return rows[0]; }
 export async function updateUserRole(id: number, role: Role) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.update(users).set({ role }).where(eq(users.id, id)); return getUserById(id); }
-export async function listUsers() { const db = await getDb(); if (!db) return []; return db.select({ id: users.id, name: users.name, email: users.email, image: users.image, role: users.role, reputation: users.reputation, reputationPoints: users.reputationPoints, isBanned: users.isBanned, createdAt: users.createdAt }).from(users).orderBy(desc(users.createdAt)); }
+export async function listUsers() { const db = await getDb(); if (!db) return []; return db.select({ id: users.id, username: users.username, name: users.name, email: users.email, image: users.image, role: users.role, reputation: users.reputation, reputationPoints: users.reputationPoints, isBanned: users.isBanned, createdAt: users.createdAt }).from(users).orderBy(desc(users.createdAt)); }
+export async function getUserByLogin(login: string) { const db = await getDb(); if (!db) return undefined; const normalized = login.trim().toLowerCase(); const rows = await db.select().from(users).where(sql`lower(${users.email}) = ${normalized} or lower(${users.username}) = ${normalized}`).limit(1); return rows[0]; }
+export async function createLocalUser(input: { email: string; username: string; password: string }) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const passwordHash = await hashPassword(input.password); const [user] = await db.insert(users).values({ openId: `local:${input.username.toLowerCase()}`, email: input.email.trim().toLowerCase(), username: input.username.trim(), name: input.username.trim(), passwordHash, loginMethod: "password" }).returning(); return user; }
+export async function setUserPassword(id: number, password: string) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const passwordHash = await hashPassword(password); await db.update(users).set({ passwordHash, loginMethod: "password" }).where(eq(users.id, id)); return getUserById(id); }
+export async function updateUsername(id: number, username: string) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.update(users).set({ username: username.trim() }).where(eq(users.id, id)); return getUserById(id); }
 export async function deleteUser(id: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.transaction(async tx => { const owned = await tx.select({ id: tickets.id }).from(tickets).where(eq(tickets.authorId, id)); for (const ticket of owned) { await tx.delete(flags).where(eq(flags.ticketId, ticket.id)); await tx.delete(upvotes).where(eq(upvotes.ticketId, ticket.id)); await tx.delete(comments).where(eq(comments.ticketId, ticket.id)); await tx.delete(tickets).where(eq(tickets.id, ticket.id)); } await tx.update(tickets).set({ assignedTechId: null }).where(eq(tickets.assignedTechId, id)); await tx.delete(flags).where(eq(flags.userId, id)); await tx.delete(comments).where(eq(comments.userId, id)); await tx.delete(upvotes).where(eq(upvotes.userId, id)); await tx.delete(notifications).where(eq(notifications.userId, id)); await tx.delete(users).where(eq(users.id, id)); }); return { success: true as const }; }
 export async function getPublicProfile(id: number) { const profile = await getUserProfile(id); if (!profile) return undefined; return { ...profile, reports: await listTickets(undefined, undefined, id) }; }
 
@@ -111,7 +120,7 @@ export async function listUnreadNotifications(userId: number) { const db = await
 export async function createNotification(userId: number, message: string) { const db = await getDb(); if (!db) return; await db.insert(notifications).values({ userId, message }); }
 export async function markNotificationsRead(userId: number) { const db = await getDb(); if (!db) return; await db.update(notifications).set({ isRead: 1 }).where(and(eq(notifications.userId, userId), eq(notifications.isRead, 0))); return { success: true as const }; }
 export async function listTechnicians() { const db = await getDb(); if (!db) return []; return db.select({ id: users.id, name: users.name, email: users.email, image: users.image }).from(users).where(eq(users.role, "tech")); }
-export async function getUserProfile(id: number) { try { const db = await getDb(); if (!db) return undefined; const rows = await db.select({ id: users.id, name: users.name, email: users.email, image: users.image, role: users.role, reputation: users.reputation, reputationPoints: users.reputationPoints, isBanned: users.isBanned }).from(users).where(eq(users.id, id)).limit(1); return rows[0]; } catch (error) { console.warn("[Database] Failed to load profile:", error); return undefined; } }
+export async function getUserProfile(id: number) { try { const db = await getDb(); if (!db) return undefined; const rows = await db.select({ id: users.id, username: users.username, name: users.name, email: users.email, image: users.image, role: users.role, reputation: users.reputation, reputationPoints: users.reputationPoints, isBanned: users.isBanned }).from(users).where(eq(users.id, id)).limit(1); return rows[0]; } catch (error) { console.warn("[Database] Failed to load profile:", error); return undefined; } }
 
 export async function flagHoax(input: { ticketId: number; reporterId: number; reason?: string }) {
   const db = await getDb(); if (!db) throw new Error("Database unavailable");
@@ -122,7 +131,7 @@ export async function listHoaxFlags() {
   const db = await getDb(); if (!db) return [];
   return db.select({ id: hoaxFlags.id, ticketId: hoaxFlags.ticketId, reporterId: hoaxFlags.userId, reason: hoaxFlags.reason, createdAt: hoaxFlags.createdAt, reporterName: users.name }).from(hoaxFlags).leftJoin(users, eq(hoaxFlags.userId, users.id)).orderBy(desc(hoaxFlags.createdAt));
 }
-export async function updateUser(id: number, update: { name?: string | null; email?: string | null; role?: Role; reputationPoints?: number; isBanned?: boolean }) {
+export async function updateUser(id: number, update: { username?: string | null; name?: string | null; email?: string | null; role?: Role; reputationPoints?: number; isBanned?: boolean }) {
   const db = await getDb(); if (!db) throw new Error("Database unavailable");
   const patch = { ...update, ...(update.reputationPoints === undefined ? {} : { reputation: update.reputationPoints }) };
   await db.update(users).set(patch).where(eq(users.id, id)); return getUserById(id);

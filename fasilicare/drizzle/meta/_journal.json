@@ -15,6 +15,13 @@
       "when": 1788607476171,
       "tag": "0001_vengeful_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788620535593,
+      "tag": "0002_empty_fabian_cortez",
+      "breakpoints": true
     }
   ]
 }

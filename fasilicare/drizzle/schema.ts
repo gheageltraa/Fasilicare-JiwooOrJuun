@@ -11,7 +11,7 @@ export const ticketStatusEnum = pgEnum("ticket_status", ticketStatusValues);
 export const urgencyEnum = pgEnum("urgency", urgencyValues);
 
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(), openId: varchar("openId", { length: 64 }).notNull().unique(),
+  id: serial("id").primaryKey(), openId: varchar("openId", { length: 64 }).notNull().unique(), username: varchar("username", { length: 64 }).unique(), passwordHash: text("password_hash"),
   name: text("name"), email: varchar("email", { length: 320 }), loginMethod: varchar("loginMethod", { length: 64 }), image: text("image"),
   reputation: integer("reputation").default(0).notNull(), reputationPoints: integer("reputation_points").default(0).notNull(),
   isBanned: boolean("is_banned").default(false).notNull(),
