@@ -341,6 +341,7 @@ export function Profile() {
                 const stages = [
                   "pending",
                   "approved",
+                  "assigned",
                   "in_progress",
                   "resolved",
                 ];

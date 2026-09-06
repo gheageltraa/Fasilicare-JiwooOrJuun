@@ -48,7 +48,7 @@ const categories = [
   "Escalator",
   "Other",
 ] as const;
-const statuses = ["pending", "approved", "in_progress", "resolved"] as const;
+const statuses = ["pending", "approved", "assigned", "in_progress", "resolved"] as const;
 const urgencies = ["low", "medium", "high", "critical"] as const;
 
 type Props = { initialTab?: Tab };
@@ -710,6 +710,7 @@ type TicketRow = {
   locationName: string | null;
   upvoteCount: number;
 };
+type TechnicianRow = { id: number; name: string | null; email: string | null };
 function TicketsTable({
   tickets,
   onUpdate,
@@ -725,6 +726,19 @@ function TicketsTable({
   }) => void;
   onDelete: (id: number) => void;
 }) {
+  const utils = trpc.useUtils();
+  const technicians = trpc.tickets.technicians.useQuery();
+  const assign = trpc.tickets.assign.useMutation({
+    onSuccess: () => {
+      toast.success("Ticket approved and assigned");
+      setAssigningTicket(null);
+      utils.admin.tickets.invalidate();
+      utils.tickets.triage.invalidate();
+    },
+    onError: error => toast.error(error.message),
+  });
+  const [assigningTicket, setAssigningTicket] = React.useState<TicketRow | null>(null);
+  const [technicianId, setTechnicianId] = React.useState("");
   const [drafts, setDrafts] = React.useState<
     Record<
       number,
@@ -785,6 +799,19 @@ function TicketsTable({
                     <Pencil className="mr-1 size-3" />
                     Save edit
                   </Button>
+                  {(item.status === "pending" || item.status === "approved") && (
+                    <Button
+                      size="sm"
+                      className="bg-orange-500 text-white hover:bg-orange-600"
+                      onClick={() => {
+                        setAssigningTicket(item);
+                        setTechnicianId("");
+                      }}
+                    >
+                      <UserRound className="mr-1 size-3" />
+                      Approve &amp; Assign
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="ghost"
@@ -861,6 +888,41 @@ function TicketsTable({
           <p className="p-8 text-center text-sm text-slate-500">No tickets.</p>
         )}
       </Card>
+      <Dialog open={!!assigningTicket} onOpenChange={open => !open && setAssigningTicket(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Approve &amp; Assign ticket</DialogTitle>
+            <DialogDescription>
+              Choose a technician to move this ticket into the assigned queue.
+            </DialogDescription>
+          </DialogHeader>
+          <select
+            value={technicianId}
+            onChange={event => setTechnicianId(event.target.value)}
+            className="h-10 w-full rounded-lg border border-orange-100 bg-white px-3 text-sm font-semibold"
+          >
+            <option value="">Select a technician</option>
+            {technicians.data?.map((technician: TechnicianRow) => (
+              <option key={technician.id} value={technician.id}>
+                {technician.name || technician.email || `Technician #${technician.id}`}
+              </option>
+            ))}
+          </select>
+          {!technicians.isLoading && !technicians.data?.length && (
+            <p className="text-sm text-rose-600">No technician accounts are available.</p>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssigningTicket(null)}>Cancel</Button>
+            <Button
+              disabled={!assigningTicket || !technicianId || assign.isPending}
+              onClick={() => assigningTicket && assign.mutate({ ticketId: assigningTicket.id, technicianId: Number(technicianId) })}
+              className="bg-orange-500 text-white hover:bg-orange-600"
+            >
+              Confirm assignment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

@@ -86,7 +86,7 @@ export async function updateLocation(id: number, update: { name?: string; type?:
 export async function verifyLocation(id: number, isVerified: boolean) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); const [location] = await db.update(locations).set({ isVerified }).where(eq(locations.id, id)).returning(); return location; }
 export async function deleteLocation(id: number) { const db = await getDb(); if (!db) throw new Error("Database unavailable"); await db.transaction(async tx => { const linked = await tx.select({ id: tickets.id }).from(tickets).where(eq(tickets.locationId, id)); for (const ticket of linked) { await tx.delete(flags).where(eq(flags.ticketId, ticket.id)); await tx.delete(upvotes).where(eq(upvotes.ticketId, ticket.id)); await tx.delete(comments).where(eq(comments.ticketId, ticket.id)); await tx.delete(tickets).where(eq(tickets.id, ticket.id)); } await tx.delete(locations).where(eq(locations.id, id)); }); return { success: true as const }; }
 
-const ticketSelect = {
+  const ticketSelect = {
   id: tickets.id, issueDesc: tickets.issueDesc, category: tickets.category, photoUrl: tickets.photoUrl, proofUrl: tickets.proofUrl,
   status: tickets.status, urgency: tickets.urgency, authorId: tickets.authorId, assignedTechId: tickets.assignedTechId, startedAt: tickets.startedAt, resolvedAt: tickets.resolvedAt, locationId: tickets.locationId, createdAt: tickets.createdAt, updatedAt: tickets.updatedAt,
   locationName: locations.name, locationType: locations.type, authorName: users.name, authorEmail: users.email, completedAt: tickets.completedAt,

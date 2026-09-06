@@ -2,7 +2,7 @@
 
 export const roleValues = ["user", "admin", "tech"] as const;
 export type Role = (typeof roleValues)[number];
-export const ticketStatusValues = ["pending", "approved", "in_progress", "resolved"] as const;
+export const ticketStatusValues = ["pending", "approved", "assigned", "in_progress", "resolved"] as const;
 export type TicketStatus = (typeof ticketStatusValues)[number];
 export const urgencyValues = ["low", "medium", "high", "critical"] as const;
 export type Urgency = (typeof urgencyValues)[number];

@@ -12,6 +12,7 @@ import { Footer, Navbar } from "@/components/FasiliCareShell";
 const statusLabel: Record<string, string> = {
   pending: "PENDING",
   approved: "APPROVED",
+  assigned: "ASSIGNED",
   in_progress: "IN PROGRESS",
   resolved: "RESOLVED",
 };

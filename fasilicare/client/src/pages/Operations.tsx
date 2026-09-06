@@ -153,12 +153,12 @@ function TechCard({
         {ticket.locationName} · {ticket.urgency.toUpperCase()} priority
       </p>
       <div className="mt-5">
-        {ticket.status === "approved" && (
+        {ticket.status === "assigned" && (
           <Button
             onClick={onStart}
             className="w-full rounded-xl bg-orange-500 py-5 font-bold text-white hover:bg-orange-600"
           >
-            Start Repair
+            Mulai Kerjakan
           </Button>
         )}
         {ticket.status === "in_progress" && (
@@ -176,7 +176,7 @@ function TechCard({
                 }
                 className="mt-3 w-full rounded-xl bg-[#102a43] py-5 font-bold text-white"
               >
-                Finish Repair
+                Selesaikan
               </Button>
             )}
           </>
