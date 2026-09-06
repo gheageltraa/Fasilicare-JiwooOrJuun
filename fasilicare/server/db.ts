@@ -4,8 +4,8 @@ import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:cry
 import { promisify } from "node:util";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { comments, flags, hoaxFlags, locations, notifications, tickets, upvotes, users, type InsertUser, type Role, type TicketStatus, type Urgency } from "../drizzle/schema";
-import { getDatabaseUrl } from "./_core/databaseUrl";
+import { comments, flags, hoaxFlags, locations, notifications, tickets, upvotes, users, type InsertUser, type Role, type TicketStatus, type Urgency } from "../drizzle/schema.js";
+import { getDatabaseUrl } from "./_core/databaseUrl.js";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 const scrypt = promisify(scryptCallback);

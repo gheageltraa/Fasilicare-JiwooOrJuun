@@ -1,5 +1,5 @@
 import type express from "express";
-import { ENV } from "./env";
+import { ENV } from "./env.js";
 
 export function registerStorageProxy(app: express.Application) {
   app.get("/storage/*", async (req: express.Request, res: express.Response, _next: express.NextFunction) => {

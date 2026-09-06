@@ -4,7 +4,7 @@
 // Downloads return /storage/{key} paths served via 307 redirect.
 // Downloads return /storage/{key} paths served via 307 redirect.
 
-import { ENV } from "./_core/env";
+import { ENV } from "./_core/env.js";
 
 function getForgeConfig() {
   const forgeUrl = ENV.forgeApiUrl;

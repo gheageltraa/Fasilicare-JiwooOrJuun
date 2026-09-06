@@ -2,10 +2,10 @@ import { TRPCError } from "@trpc/server";
 import type express from "express";
 import { z } from "zod";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
-import { systemRouter } from "./_core/systemRouter";
-import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { sdk } from "./_core/sdk";
+import { getSessionCookieOptions } from "./_core/cookies.js";
+import { systemRouter } from "./_core/systemRouter.js";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc.js";
+import { sdk } from "./_core/sdk.js";
 import { addComment, addUpvote, createLocation, createNotification, createTicket, createLocalUser, deleteLocation, deleteTicket, deleteUser, flagHoax, getPublicProfile, getTicket, getUserById, getUserByLogin, getUserByOpenId, getUserProfile, hashPassword, hasUpvoted, importUsers, isLeadEmail, COMMUNITY_VALIDATION_THRESHOLD, listComments, listHoaxFlags, listLocations, listNotifications, listUnverifiedLocations, listUnreadNotifications, listTickets, listTechnicians, listUsers, markNotificationsRead, reportUser, seedLocations, setUserBanned, setUserPassword, updateComment, updateLocation, updateTicket, updateUser, updateUserImage, updateUserRole, updateUsername, upsertUser, verifyLocation, verifyPassword } from "./db";
 
 const roleSchema = z.enum(["user", "admin", "tech"]);

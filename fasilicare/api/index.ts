@@ -1,4 +1,4 @@
-import app, { createApp } from "../server/_core/index";
+import app, { createApp } from "../server/_core/index.js";
 
 await createApp(app);
 

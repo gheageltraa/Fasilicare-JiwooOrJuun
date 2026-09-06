@@ -1,10 +1,10 @@
 import { COOKIE_NAME, ONE_YEAR_MS, OAUTH_STATE_COOKIE, decodeOAuthState } from "@shared/const";
 import { parse as parseCookieHeader } from "cookie";
 import type { Express, Request, Response } from "express";
-import * as db from "../db";
-import { getSessionCookieOptions } from "./cookies";
-import { sdk } from "./sdk";
-import { getProfileImage } from "../authProfile";
+import * as db from "../db.js";
+import { getSessionCookieOptions } from "./cookies.js";
+import { sdk } from "./sdk.js";
+import { getProfileImage } from "../authProfile.js";
 import crypto from "node:crypto";
 
 function getQueryParam(req: Request, key: string): string | undefined {

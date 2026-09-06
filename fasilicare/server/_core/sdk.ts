@@ -4,17 +4,17 @@ import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
 import type express from "express";
 import { SignJWT, jwtVerify } from "jose";
-import type { User } from "../../drizzle/schema";
-import { getProfileImage } from "../authProfile";
-import * as db from "../db";
-import { ENV } from "./env";
+import type { User } from "../../drizzle/schema.js";
+import { getProfileImage } from "../authProfile.js";
+import * as db from "../db.js";
+import { ENV } from "./env.js";
 import type {
     ExchangeTokenRequest,
     ExchangeTokenResponse,
     GetUserInfoResponse,
     GetUserInfoWithJwtRequest,
     GetUserInfoWithJwtResponse,
-} from "./types/authTypes";
+} from "./types/authTypes.js";
 // Utility function
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;

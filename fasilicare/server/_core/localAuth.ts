@@ -2,9 +2,9 @@ import type express from "express";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-import { getSessionCookieOptions } from "./cookies";
-import { sdk } from "./sdk";
-import { createLocalUser, getUserByLogin, getUserByOpenId, upsertUser, verifyPassword } from "../db";
+import { getSessionCookieOptions } from "./cookies.js";
+import { sdk } from "./sdk.js";
+import { createLocalUser, getUserByLogin, getUserByOpenId, upsertUser, verifyPassword } from "../db.js";
 
 const registerSchema = z.object({
   email: z.string().email(),
