@@ -199,7 +199,7 @@ export function Login() {
     setIsLoggingIn(true);
     try {
       const response = await fetch(`${apiUrl}/api/login`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ login, password }) });
-      const body = (await response.json()) as { error?: string };
+      const body = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(body.error || "Could not sign you in.");
       await utils.auth.me.invalidate();
       navigate("/");
@@ -288,7 +288,7 @@ export function GoogleButton() {
     setPending(true);
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/login" },
+      options: { redirectTo: `${window.location.origin}/` },
     });
     if (authError) {
       setError(authError.message);

@@ -52,12 +52,25 @@ export function useAuth(options?: UseAuthOptions) {
     if (!supabase) return;
     let active = true;
     const syncSupabaseSession = async (accessToken?: string) => {
-      if (!accessToken || !active) return;
-      const response = await fetch(`${apiUrl}/api/auth/supabase`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ accessToken }) });
-      if (response.ok) await utils.auth.me.invalidate();
+      if (!active) return;
+      if (!accessToken) {
+        utils.auth.me.setData(undefined, null);
+        await utils.auth.me.invalidate();
+        return;
+      }
+      try {
+        const response = await fetch(`${apiUrl}/api/auth/supabase`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ accessToken }) });
+        if (response.ok) await utils.auth.me.refetch();
+      } catch (error) {
+        console.error("[Auth] Could not sync Supabase session", error);
+      }
     };
     void supabase.auth.getSession().then(({ data }) => syncSupabaseSession(data.session?.access_token));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { void syncSupabaseSession(session?.access_token); });
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "SIGNED_OUT") {
+        void syncSupabaseSession(session?.access_token);
+      }
+    });
     return () => { active = false; listener.subscription.unsubscribe(); };
   }, [utils]);
 

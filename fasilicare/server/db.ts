@@ -89,7 +89,7 @@ export async function deleteLocation(id: number) { const db = await getDb(); if 
   const ticketSelect = {
   id: tickets.id, issueDesc: tickets.issueDesc, category: tickets.category, photoUrl: tickets.photoUrl, proofUrl: tickets.proofUrl,
   status: tickets.status, urgency: tickets.urgency, authorId: tickets.authorId, assignedTechId: tickets.assignedTechId, startedAt: tickets.startedAt, resolvedAt: tickets.resolvedAt, locationId: tickets.locationId, createdAt: tickets.createdAt, updatedAt: tickets.updatedAt,
-  locationName: locations.name, locationType: locations.type, authorName: users.name, authorEmail: users.email, completedAt: tickets.completedAt,
+  locationName: locations.name, locationType: locations.type, transitType: locations.type, authorName: users.name, authorEmail: users.email, completedAt: tickets.completedAt,
   upvoteCount: count(upvotes.id).as("upvoteCount"),
 };
 

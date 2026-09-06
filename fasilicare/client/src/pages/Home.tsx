@@ -8,6 +8,14 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Footer, Navbar } from "@/components/FasiliCareShell";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const statusLabel: Record<string, string> = {
   pending: "PENDING",
@@ -130,6 +138,59 @@ export default function Home() {
                 Support important reports. Community validation helps field
                 teams set repair priorities.
               </p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="mt-5 flex cursor-pointer flex-wrap items-center gap-2 transition-colors"
+                    aria-label="Learn how FasiliCare supports the Sustainable Development Goals"
+                  >
+                    <div className="flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 shadow-sm backdrop-blur-sm hover:bg-white/10">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>
+                      <span>SDG 9: Industry &amp; Infrastructure</span>
+                    </div>
+                    <div className="flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 shadow-sm backdrop-blur-sm hover:bg-white/10">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-400"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0 20" /><path d="M2 12h20" /></svg>
+                      <span>SDG 11: Sustainable Cities</span>
+                    </div>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl border-slate-200 bg-white p-7 text-slate-900 shadow-2xl dark:border-slate-700 dark:bg-slate-950 dark:text-white sm:p-8">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-black tracking-tight sm:text-3xl">
+                      FasiliCare&apos;s Global Impact
+                    </DialogTitle>
+                    <DialogDescription className="text-sm text-slate-500 dark:text-slate-400">
+                      Aligning with the UN Sustainable Development Goals
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-5 grid gap-5">
+                    <section className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5 dark:border-blue-400/20 dark:bg-blue-400/10">
+                      <div className="flex items-start gap-3">
+                        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-500 dark:bg-blue-400/20 dark:text-blue-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>
+                        </div>
+                        <div>
+                          <h3 className="font-black text-blue-700 dark:text-blue-300">SDG 9 - Industry, Innovation and Infrastructure</h3>
+                          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">FasiliCare provides an innovative digital infrastructure that bridges the gap between commuters and maintenance teams. By crowdsourcing facility data, we ensure public transit systems remain resilient, responsive, and continuously upgraded.</p>
+                        </div>
+                      </div>
+                    </section>
+                    <section className="rounded-2xl border border-orange-100 bg-orange-50/70 p-5 dark:border-orange-400/20 dark:bg-orange-400/10">
+                      <div className="flex items-start gap-3">
+                        <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-orange-100 text-orange-500 dark:bg-orange-400/20 dark:text-orange-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0 20" /><path d="M2 12h20" /></svg>
+                        </div>
+                        <div>
+                          <h3 className="font-black text-orange-700 dark:text-orange-300">SDG 11 - Sustainable Cities and Communities</h3>
+                          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">Public transport is the backbone of a sustainable city. FasiliCare directly empowers citizens to report hazards and maintenance needs, creating safer, more accessible, and resilient urban mobility networks for everyone.</p>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-5 text-sm text-slate-300">
                 <span className="status-live bg-emerald-400" /> Community
                 reporting is open

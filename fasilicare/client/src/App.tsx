@@ -70,7 +70,7 @@ function Signup() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form className="space-y-4" onSubmit={event => { event.preventDefault(); setRegisterError(""); setIsRegistering(true); void fetch(`${apiUrl}/api/register`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email, username, password }) }).then(async response => { const body = (await response.json()) as { error?: string }; if (!response.ok) throw new Error(body.error || "Could not create your account."); navigate("/"); }).catch(error => { const message = error instanceof Error ? error.message : "Could not create your account."; setRegisterError(message); toast.error(message); }).finally(() => setIsRegistering(false)); }}>
+            <form className="space-y-4" onSubmit={event => { event.preventDefault(); setRegisterError(""); setIsRegistering(true); void fetch(`${apiUrl}/api/register`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email, username, password }) }).then(async response => { const body = await response.json().catch(() => ({})) as { error?: string }; if (!response.ok) throw new Error(body.error || "Could not create your account."); navigate("/"); }).catch(error => { const message = error instanceof Error ? error.message : "Could not create your account."; setRegisterError(message); toast.error(message); }).finally(() => setIsRegistering(false)); }}>
             <div>
               <Label htmlFor="signup-email">Email</Label>
               <Input
