@@ -10,7 +10,7 @@
 
 ### Submission for ITECHNO CUP 2026 — Web Development
 
-**By Tim FasiliCare — Dhanny & Ghea**
+**By Tim JiwooOrJuun — Dhanny & Ghea**
 
 </div>
 
@@ -454,7 +454,7 @@ Lihat file [`LICENSE`](LICENSE) untuk informasi selengkapnya.
 
 <div align="center">
 
-### Made with ❤️ by Tim FasiliCare
+### Made with ❤️ by Tim JiwooOrJuun
 
 **For ITECHNO CUP 2026**
 
