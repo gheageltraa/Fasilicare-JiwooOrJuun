@@ -1,5 +1,5 @@
 import expressRuntime from "express";
-import type express from "express";
+import type { Request as ExRequest, Response as ExResponse, Application as ExApp, NextFunction as ExNext } from "express";
 import fs from "fs";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
@@ -7,7 +7,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config.ts";
 
-export async function setupVite(app: express.Application, server: Server) {
+export async function setupVite(app: ExApp, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -22,7 +22,7 @@ export async function setupVite(app: express.Application, server: Server) {
   });
 
   app.use(vite.middlewares);
-  app.use("*", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  app.use("*", async (req: ExRequest, res: ExResponse, next: ExNext) => {
     const url = req.originalUrl;
 
     try {
@@ -48,7 +48,7 @@ export async function setupVite(app: express.Application, server: Server) {
   });
 }
 
-export function serveStatic(app: express.Application) {
+export function serveStatic(app: ExApp) {
   const distPath =
     process.env.NODE_ENV === "development"
       ? path.resolve(import.meta.dirname, "../..", "dist", "public")
@@ -62,7 +62,7 @@ export function serveStatic(app: express.Application) {
   app.use(expressRuntime.static(distPath));
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req: express.Request, res: express.Response) => {
+  app.use("*", (_req: ExRequest, res: ExResponse) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }

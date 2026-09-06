@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import type { Request as ExRequest, Response as ExResponse, Application as ExApp, NextFunction as ExNext } from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -34,7 +35,7 @@ export async function createApp(appInstance = app, server = createServer(appInst
   // Configure body parser with larger size limit for file uploads
   appInstance.use(express.json({ limit: "50mb" }));
   appInstance.use(express.urlencoded({ limit: "50mb", extended: true }));
-  appInstance.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+  appInstance.get("/api/health", (_req: ExRequest, res: ExResponse) => res.json({ status: "ok" }));
   registerStorageProxy(appInstance);
   registerLocalAuthRoutes(appInstance);
   // tRPC API

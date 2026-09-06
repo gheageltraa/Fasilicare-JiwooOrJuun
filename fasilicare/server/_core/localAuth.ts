@@ -1,4 +1,4 @@
-import type express from "express";
+import type { Request as ExRequest, Response as ExResponse, Application as ExApp, NextFunction as ExNext } from "express";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
@@ -16,12 +16,12 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-function sendError(res: express.Response, status: number, message: string) {
+function sendError(res: ExResponse, status: number, message: string) {
   res.status(status).json({ error: message });
 }
 
-export function registerLocalAuthRoutes(app: express.Application) {
-  app.post("/api/auth/supabase", async (req: express.Request, res: express.Response, _next: express.NextFunction) => {
+export function registerLocalAuthRoutes(app: ExApp) {
+  app.post("/api/auth/supabase", async (req: ExRequest, res: ExResponse, _next: ExNext) => {
     const accessToken = typeof req.body?.accessToken === "string" ? req.body.accessToken : "";
     const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
@@ -44,7 +44,7 @@ export function registerLocalAuthRoutes(app: express.Application) {
     }
   });
 
-  app.post("/api/register", async (req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  app.post("/api/register", async (req: ExRequest, res: ExResponse, _next: ExNext) => {
     const parsed = registerSchema.safeParse(req.body);
     if (!parsed.success) return sendError(res, 400, "Enter a valid email, username, and password.");
     try {
@@ -60,7 +60,7 @@ export function registerLocalAuthRoutes(app: express.Application) {
     }
   });
 
-  app.post("/api/login", async (req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  app.post("/api/login", async (req: ExRequest, res: ExResponse, _next: ExNext) => {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) return sendError(res, 400, "Enter your email or username and password.");
     try {

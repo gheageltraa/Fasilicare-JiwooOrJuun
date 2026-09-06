@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import type express from "express";
+import type { Request as ExRequest, Response as ExResponse, Application as ExApp, NextFunction as ExNext } from "express";
 import { z } from "zod";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies.js";
