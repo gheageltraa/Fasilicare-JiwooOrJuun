@@ -1,12 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import type { Request as ExRequest, Response as ExResponse, Application as ExApp, NextFunction as ExNext } from "express";
 import { z } from "zod";
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const.js";
 import { getSessionCookieOptions } from "./_core/cookies.js";
 import { systemRouter } from "./_core/systemRouter.js";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc.js";
 import { sdk } from "./_core/sdk.js";
-import { addComment, addUpvote, createLocation, createNotification, createTicket, createLocalUser, deleteLocation, deleteTicket, deleteUser, flagHoax, getPublicProfile, getTicket, getUserById, getUserByLogin, getUserByOpenId, getUserProfile, hashPassword, hasUpvoted, importUsers, isLeadEmail, COMMUNITY_VALIDATION_THRESHOLD, listComments, listHoaxFlags, listLocations, listNotifications, listUnverifiedLocations, listUnreadNotifications, listTickets, listTechnicians, listUsers, markNotificationsRead, reportUser, seedLocations, setUserBanned, setUserPassword, updateComment, updateLocation, updateTicket, updateUser, updateUserImage, updateUserRole, updateUsername, upsertUser, verifyLocation, verifyPassword } from "./db";
+import { addComment, addUpvote, createLocation, createNotification, createTicket, createLocalUser, deleteLocation, deleteTicket, deleteUser, flagHoax, getPublicProfile, getTicket, getUserById, getUserByLogin, getUserByOpenId, getUserProfile, hashPassword, hasUpvoted, importUsers, isLeadEmail, COMMUNITY_VALIDATION_THRESHOLD, listComments, listHoaxFlags, listLocations, listNotifications, listUnverifiedLocations, listUnreadNotifications, listTickets, listTechnicians, listUsers, markNotificationsRead, reportUser, seedLocations, setUserBanned, setUserPassword, updateComment, updateLocation, updateTicket, updateUser, updateUserImage, updateUserRole, updateUsername, upsertUser, verifyLocation, verifyPassword } from "./db.js";
 
 const roleSchema = z.enum(["user", "admin", "tech"]);
 async function ensureValidated(ticketId: number, status: string) { const ticket = await getTicket(ticketId); if (!ticket) throw new TRPCError({ code: "NOT_FOUND", message: "Ticket not found." }); if ((status === "approved" || status === "resolved") && ticket.upvoteCount < COMMUNITY_VALIDATION_THRESHOLD) throw new TRPCError({ code: "PRECONDITION_FAILED", message: `Community validation needs at least ${COMMUNITY_VALIDATION_THRESHOLD} support.` }); return ticket; }

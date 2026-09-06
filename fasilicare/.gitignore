@@ -110,3 +110,6 @@ temp/
 .webdev/
 
 .project-config.json
+
+.vercel
+.env*
